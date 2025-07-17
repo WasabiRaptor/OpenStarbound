@@ -814,6 +814,11 @@ namespace LuaBindings {
           return entity->movementController()->liquidMovement();
         return {};
       });
+    callbacks.registerCallback("entityGetScale", [world](EntityId entityId) -> Maybe<bool> {
+        if (auto entity = world->get<ActorEntity>(entityId))
+          return entity->movementController()->getScale();
+        return {};
+      });
 
   }
 
