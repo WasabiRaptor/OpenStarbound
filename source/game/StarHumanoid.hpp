@@ -6,6 +6,7 @@
 #include "StarParticle.hpp"
 #include "StarNetworkedAnimator.hpp"
 #include "StarNetElement.hpp"
+#include "StarLoungingEntities.hpp"
 
 namespace Star {
 
@@ -315,6 +316,8 @@ public:
   NetworkedAnimator const* networkedAnimator() const;
   NetworkedAnimator::DynamicTarget * networkedAnimatorDynamicTarget();
 
+  Json humanoidConfig(bool withOverrides = true);
+
   // Extracts scalenearest from directives and returns the combined scale and
   // a new Directives without those scalenearest directives.
   static pair<Vec2F, Directives> extractScaleFromDirectives(Directives const& directives);
@@ -498,7 +501,8 @@ public:
   void blankNetDelta(float interpolationTime) override;
 
   HumanoidPtr humanoid();
-
+  LoungeableEntity::LoungePositions* loungePositions();
+  LoungeableEntity::LoungePositions const* loungePositions() const;
 private:
   void setupNetElements();
 
@@ -506,6 +510,7 @@ private:
   Json m_config;
   JsonObject m_parameters;
   HumanoidPtr m_humanoid;
+  LoungeableEntity::LoungePositions m_loungePositions;
 };
 
 template <typename T>

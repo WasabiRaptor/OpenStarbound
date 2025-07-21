@@ -14,5 +14,8 @@
 
   "inventoryFilters" : { "default" : {} },
 
-  "swapDance" : null // Set this to a valid dance to trigger on character swap.
+  "swapDance" : null, // Set this to a valid dance to trigger on character swap.
+
+  "slaveControlTimeout" : 2.0,
+  "slaveControlHeartbeat" : 1.0
 }

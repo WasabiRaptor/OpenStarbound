@@ -8,6 +8,7 @@
 #include "StarSpeciesDatabase.hpp"
 #include "StarDanceDatabase.hpp"
 
+
 namespace Star {
 
 extern EnumMap<HumanoidEmote> const HumanoidEmoteNames{
@@ -2263,6 +2264,12 @@ NetworkedAnimator::DynamicTarget * Humanoid::networkedAnimatorDynamicTarget() {
   return &m_networkedAnimatorDynamicTarget;
 }
 
+Json Humanoid::humanoidConfig(bool withOverrides) {
+  if (withOverrides)
+    return jsonMerge(m_baseConfig, m_mergeConfig);
+  return m_baseConfig;
+}
+
 void NetHumanoid::initNetVersion(NetElementVersion const* version) {
   m_humanoid->networkedAnimator()->initNetVersion(version);
 }
@@ -2322,9 +2329,23 @@ void NetHumanoid::blankNetDelta(float interpolationTime) {
 HumanoidPtr NetHumanoid::humanoid() {
   return m_humanoid;
 }
+LoungeableEntity::LoungePositions* NetHumanoid::loungePositions() {
+  return &m_loungePositions;
+}
+LoungeableEntity::LoungePositions const* NetHumanoid::loungePositions() const {
+  return &m_loungePositions;
+}
 
 void NetHumanoid::setupNetElements() {
   m_netGroup.addNetElement(m_humanoid->networkedAnimator());
+
+  for (auto const& pair : m_humanoid->humanoidConfig(false).getObject("loungePositions", JsonObject())) {
+    m_loungePositions.set(pair.first, LoungeableEntity::LoungePositionConfig(pair.second));
+  }
+  m_loungePositions.sortByKey();
+  for (auto& p : m_loungePositions) {
+    p.second.setupNetStates(&m_netGroup, 10);
+  }
 }
 
 }

@@ -52,6 +52,9 @@ struct PlayerConfig {
   Json deploymentConfig;
 
   StringMap<String> genericScriptContexts;
+
+  float slaveControlTimeout;
+  float slaveControlHeartbeat;
 };
 
 class PlayerFactory {

@@ -1,0 +1,4 @@
+{
+  "slaveControlTimeout" : 2.0,
+  "slaveControlHeartbeat" : 1.0
+}

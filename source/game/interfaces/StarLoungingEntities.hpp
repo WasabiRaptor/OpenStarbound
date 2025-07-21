@@ -58,7 +58,8 @@ public:
   Set<pair<EntityId, size_t>> entitiesLounging() const;
 
   void setupLoungePositions(float timeout, float heartbeat, JsonObject positions, bool extraControls);
-  void setupLoungeNetStates(NetElementTopGroup* netGroup, uint8_t minimumVersion);
+  void setupLoungePositions(float timeout, float heartbeat, bool extraControls);
+  void setupLoungeNetStates(NetElementGroup* netGroup, uint8_t minimumVersion);
   void loungeInit();
   void loungeTickMaster(float dt);
   void loungeTickSlave(float dt);
@@ -77,7 +78,7 @@ public:
 
   struct LoungePositionConfig {
     LoungePositionConfig(Json config);
-    void setupNetStates(NetElementTopGroup* netGroup, uint8_t minimumVersion);
+    void setupNetStates(NetElementGroup* netGroup, uint8_t minimumVersion);
 
     // The NetworkedAnimator part and part property which should control the
     // lounge position.

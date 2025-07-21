@@ -101,15 +101,19 @@ Set<pair<EntityId, size_t>> LoungeableEntity::entitiesLounging() const {
 }
 
 void LoungeableEntity::setupLoungePositions(float timeout, float heartbeat, JsonObject positions, bool extraControls){
-  m_slaveControlTimeout = timeout;
-  m_receiveExtraControls = extraControls;
-  m_slaveHeartbeatTimer = GameTimer(heartbeat);
+  setupLoungePositions(timeout, heartbeat, extraControls);
   for (auto const& pair : positions) {
     loungePositions()->set(pair.first, LoungePositionConfig(pair.second));
   }
 }
 
-void LoungeableEntity::setupLoungeNetStates(NetElementTopGroup * netGroup, uint8_t minimumVersion) {
+void LoungeableEntity::setupLoungePositions(float timeout, float heartbeat, bool extraControls) {
+  m_slaveControlTimeout = timeout;
+  m_receiveExtraControls = extraControls;
+  m_slaveHeartbeatTimer = GameTimer(heartbeat);
+}
+
+void LoungeableEntity::setupLoungeNetStates(NetElementGroup * netGroup, uint8_t minimumVersion) {
   loungePositions()->sortByKey();
   for (auto& p : *loungePositions()) {
     p.second.setupNetStates(netGroup, minimumVersion);
@@ -310,7 +314,7 @@ LoungeableEntity::LoungePositionConfig::LoungePositionConfig(Json config){
   suppressTools = config.optBool("suppressTools");
 }
 
-void LoungeableEntity::LoungePositionConfig::setupNetStates(NetElementTopGroup * netGroup, uint8_t minimumVersion){
+void LoungeableEntity::LoungePositionConfig::setupNetStates(NetElementGroup * netGroup, uint8_t minimumVersion){
   enabled.setCompatibilityVersion(minimumVersion);
   netGroup->addNetElement(&enabled);
   orientation.setCompatibilityVersion(minimumVersion);

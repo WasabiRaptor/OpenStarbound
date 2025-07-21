@@ -46,6 +46,9 @@ PlayerConfig::PlayerConfig(JsonObject const& cfg) {
 
   for (auto& p : cfg.get("genericScriptContexts").optObject().value(JsonObject()))
     genericScriptContexts[p.first] = p.second.toString();
+
+  slaveControlTimeout = cfg.get("slaveControlTimeout").toFloat();
+  slaveControlHeartbeat = cfg.get("slaveControlHeartbeat").toFloat();
 }
 
 PlayerFactory::PlayerFactory() {

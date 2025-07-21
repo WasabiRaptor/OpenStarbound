@@ -42,7 +42,8 @@ class Npc
     public virtual LoungingEntity,
     public virtual ToolUserEntity,
     public virtual PhysicsEntity,
-    public virtual EmoteEntity {
+    public virtual EmoteEntity,
+    public virtual LoungeableEntity {
 public:
   Npc(ByteArray const& netStore, NetCompatibilityRules rules = {});
   Npc(NpcVariant const& npcVariant);
@@ -217,6 +218,11 @@ public:
   HumanoidPtr humanoid() const;
 
   bool forceNude() const;
+
+  virtual LoungeableEntity::LoungePositions* loungePositions() override;
+  virtual LoungeableEntity::LoungePositions const* loungePositions() const override;
+  virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
+  virtual NetworkedAnimator const* networkedAnimator() const override;
 
 private:
   Vec2F getAbsolutePosition(Vec2F relativePosition) const;

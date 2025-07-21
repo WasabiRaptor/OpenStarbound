@@ -58,7 +58,8 @@ class Player :
   public virtual PortraitEntity,
   public virtual NametagEntity,
   public virtual PhysicsEntity,
-  public virtual EmoteEntity {
+  public virtual EmoteEntity,
+  public virtual LoungeableEntity {
 
 public:
   enum class State {
@@ -514,6 +515,11 @@ public:
   void setSecretProperty(String const& name, Json const& value);
 
   void setAnimationParameter(String name, Json value);
+
+  virtual LoungeableEntity::LoungePositions* loungePositions() override;
+  virtual LoungeableEntity::LoungePositions const* loungePositions() const override;
+  virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
+  virtual NetworkedAnimator const* networkedAnimator() const override;
 
 private:
   typedef LuaMessageHandlingComponent<LuaStorableComponent<LuaActorMovementComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>>>> GenericScriptComponent;

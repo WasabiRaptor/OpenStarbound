@@ -88,6 +88,7 @@ Player::Player(PlayerConfigPtr config, Uuid uuid) {
     m_genericScriptContexts.set(p.first, scriptComponent);
   }
 
+  setupLoungePositions(m_config->slaveControlTimeout, m_config->slaveControlHeartbeat, true);
   // all of these are defaults and won't include the correct humanoid config for the species
   m_netHumanoid.addNetElement(make_shared<NetHumanoid>(m_identity, m_humanoidParameters, Json()));
   auto movementParameters = ActorMovementParameters(jsonMerge(humanoid()->defaultMovementParameters(), humanoid()->playerMovementParameters().value(m_config->movementParameters)));
@@ -360,6 +361,8 @@ void Player::init(World* world, EntityId entityId, EntityMode mode) {
       p.second->addCallbacks("animator", LuaBindings::makeNetworkedAnimatorCallbacks(humanoid()->networkedAnimator()));
       if (m_client)
         p.second->addCallbacks("celestial", LuaBindings::makeCelestialCallbacks(m_client));
+      if (loungePositions()->size())
+        p.second->addCallbacks("loungeable",addLoungeableCallbacks(LuaCallbacks()));
       p.second->init(world);
     }
 
@@ -404,6 +407,7 @@ void Player::uninit() {
       p.second->removeCallbacks("status");
       p.second->removeCallbacks("songbook");
       p.second->removeCallbacks("world");
+      p.second->removeCallbacks("loungeable");
       if (m_client)
         p.second->removeCallbacks("celestial");
     }
@@ -812,6 +816,10 @@ void Player::dropItem() {
 }
 
 Maybe<Json> Player::receiveMessage(ConnectionId fromConnection, String const& message, JsonArray const& args) {
+  if (loungePositions()->size())
+    if (receiveLoungeMessage(fromConnection, message, args).isValid())
+      return Json();
+
   bool localMessage = fromConnection == world()->connection();
   if (message == "queueRadioMessage" && args.size() > 0) {
     float delay = 0;
@@ -987,6 +995,9 @@ void Player::update(float dt, uint64_t) {
 
       m_techController->tickMaster(dt);
 
+      if (loungePositions()->size())
+        loungeTickMaster(dt);
+
       for (auto& p : m_genericScriptContexts)
         p.second->update(p.second->updateDt(dt));
 
@@ -1069,6 +1080,9 @@ void Player::update(float dt, uint64_t) {
     m_movementController->tickSlave(dt);
     m_techController->tickSlave(dt);
     m_statusController->tickSlave(dt);
+    if (loungePositions()->size())
+      loungeTickSlave(dt);
+
   }
 
   humanoid()->setRotation(m_movementController->rotation());
@@ -2864,6 +2878,10 @@ void Player::refreshHumanoidParameters() {
         if (p.second->initialized()) {
           p.second->removeCallbacks("animator");
           p.second->addCallbacks("animator", LuaBindings::makeNetworkedAnimatorCallbacks(humanoid()->networkedAnimator()));
+          p.second->removeCallbacks("loungeable");
+          if (loungePositions()->size())
+            p.second->addCallbacks("loungeable",addLoungeableCallbacks(LuaCallbacks()));
+
           p.second->invoke("refreshHumanoidParameters");
         }
       }
@@ -2886,6 +2904,22 @@ void Player::refreshHumanoidParameters() {
 
 void Player::setAnimationParameter(String name, Json value) {
   m_scriptedAnimationParameters.set(std::move(name), std::move(value));
+}
+
+LoungeableEntity::LoungePositions * Player::loungePositions(){
+  return m_netHumanoid.netElements().last()->loungePositions();
+}
+
+LoungeableEntity::LoungePositions const* Player::loungePositions() const {
+  return m_netHumanoid.netElements().last()->loungePositions();
+}
+
+EntityRenderLayer Player::loungeRenderLayer(size_t anchorPositionIndex) const {
+  return RenderLayerPlayer + anchorCount() - anchorPositionIndex;
+}
+
+NetworkedAnimator const* Player::networkedAnimator() const {
+  return humanoid()->networkedAnimator();
 }
 
 }

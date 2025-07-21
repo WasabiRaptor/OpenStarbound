@@ -49,6 +49,12 @@ Npc::Npc(NpcVariant const& npcVariant) {
   m_danceCooldownTimer = GameTimer(0.0f);
   m_blinkInterval = jsonToVec2F(assets->json("/npcs/npc.config:blinkInterval"));
 
+  setupLoungePositions(
+    assets->json("/npcs/npc.config:slaveControlTimeout").toFloat(),
+    assets->json("/npcs/npc.config:slaveControlHeartbeat").toFloat(),
+    true
+  );
+
   m_questIndicatorOffset = jsonToVec2F(assets->json("/quests/quests.config:defaultIndicatorOffset"));
 
   if (npcVariant.overrides)
@@ -196,6 +202,9 @@ void Npc::init(World* world, EntityId entityId, EntityMode mode) {
     m_scriptComponent.addCallbacks("songbook", LuaBindings::makeSongbookCallbacks(m_songbook.get()));
     m_scriptComponent.addCallbacks("animator", LuaBindings::makeNetworkedAnimatorCallbacks(humanoid()->networkedAnimator()));
     m_scriptComponent.addActorMovementCallbacks(m_movementController.get());
+    if (loungePositions()->size())
+      m_scriptComponent.addCallbacks("loungeable",addLoungeableCallbacks(LuaCallbacks()));
+
     m_scriptComponent.init(world);
   }
   if (world->isClient()) {
@@ -226,6 +235,7 @@ void Npc::uninit() {
     m_scriptComponent.removeCallbacks("behavior");
     m_scriptComponent.removeCallbacks("songbook");
     m_scriptComponent.removeCallbacks("animator");
+    m_scriptComponent.removeCallbacks("loungeable");
     m_scriptComponent.removeActorMovementCallbacks();
   }
   if (world()->isClient()) {
@@ -447,7 +457,8 @@ void Npc::update(float dt, uint64_t) {
 
     m_movementController->tickMaster(dt);
     m_statusController->tickMaster(dt);
-
+    if (loungePositions()->size())
+      loungeTickMaster(dt);
     tickShared(dt);
 
     if (!is<LoungeAnchor>(m_movementController->entityAnchor())) {
@@ -498,6 +509,8 @@ void Npc::update(float dt, uint64_t) {
     m_netGroup.tickNetInterpolation(dt);
     m_movementController->tickSlave(dt);
     m_statusController->tickSlave(dt);
+    if (loungePositions()->size())
+      loungeTickSlave(dt);
 
     tickShared(dt);
   }
@@ -1119,6 +1132,9 @@ List<LightSource> Npc::lightSources() const {
 }
 
 Maybe<Json> Npc::receiveMessage(ConnectionId sendingConnection, String const& message, JsonArray const& args) {
+  if (loungePositions()->size())
+    if (receiveLoungeMessage(sendingConnection, message, args).isValid())
+      return Json();
   Maybe<Json> result = m_scriptComponent.handleMessage(message, world()->connection() == sendingConnection, args);
   if (!result)
     result = m_statusController->receiveMessage(message, world()->connection() == sendingConnection, args);
@@ -1442,6 +1458,10 @@ void Npc::refreshHumanoidParameters() {
       if (m_scriptComponent.initialized()) {
         m_scriptComponent.removeCallbacks("animator");
         m_scriptComponent.addCallbacks("animator", LuaBindings::makeNetworkedAnimatorCallbacks(humanoid()->networkedAnimator()));
+        m_scriptComponent.removeCallbacks("loungeable");
+        if (loungePositions()->size())
+          m_scriptComponent.addCallbacks("loungeable",addLoungeableCallbacks(LuaCallbacks()));
+
         m_scriptComponent.invoke("refreshHumanoidParameters");
       }
     }
@@ -1467,6 +1487,22 @@ void Npc::refreshHumanoidParameters() {
 
 bool Npc::forceNude() const {
   return m_statusController->statPositive("nude");
+}
+
+LoungeableEntity::LoungePositions * Npc::loungePositions(){
+  return m_netHumanoid.netElements().last()->loungePositions();
+}
+
+LoungeableEntity::LoungePositions const* Npc::loungePositions() const {
+  return m_netHumanoid.netElements().last()->loungePositions();
+}
+
+EntityRenderLayer Npc::loungeRenderLayer(size_t anchorPositionIndex) const {
+  return RenderLayerNpc + anchorCount() - anchorPositionIndex;
+}
+
+NetworkedAnimator const* Npc::networkedAnimator() const {
+  return humanoid()->networkedAnimator();
 }
 
 }
