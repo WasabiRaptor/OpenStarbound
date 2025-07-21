@@ -86,6 +86,7 @@ public:
   MovementController* movementController() override;
   virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
   virtual NetworkedAnimator const* networkedAnimator() const override;
+  virtual NetworkedAnimator * networkedAnimator()  override;
 
   virtual LoungeableEntity::LoungePositions* loungePositions() override;
   virtual LoungeableEntity::LoungePositions const* loungePositions() const override;
