@@ -550,7 +550,7 @@ List<Drawable> Npc::drawables(Vec2F position) {
   List<Drawable> drawables;
   m_tools->setupHumanoidHandItemDrawables(*humanoid());
   auto anchor = as<LoungeAnchor>(m_movementController->entityAnchor());
-
+  setupLoungingDrawables();
   DirectivesGroup humanoidDirectives;
   Vec2F scale = Vec2F::filled(1.f);
   for (auto& directives : m_statusController->parentDirectives().list()) {
@@ -1522,6 +1522,9 @@ EntityRenderLayer Npc::loungeRenderLayer(size_t anchorPositionIndex) const {
 }
 
 NetworkedAnimator const* Npc::networkedAnimator() const {
+  return humanoid()->networkedAnimator();
+}
+NetworkedAnimator * Npc::networkedAnimator()  {
   return humanoid()->networkedAnimator();
 }
 

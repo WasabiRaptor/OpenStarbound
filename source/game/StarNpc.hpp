@@ -224,6 +224,7 @@ public:
   virtual LoungeableEntity::LoungePositions const* loungePositions() const override;
   virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
   virtual NetworkedAnimator const* networkedAnimator() const override;
+  virtual NetworkedAnimator * networkedAnimator()  override;
 
 private:
   Vec2F getAbsolutePosition(Vec2F relativePosition) const;

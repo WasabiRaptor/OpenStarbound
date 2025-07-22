@@ -301,16 +301,18 @@ void LoungeableEntity::setupLoungingDrawables() {
   for (size_t i = 0; i < loungePositions()->size(); ++i) {
     auto const& thisLounge = loungePositions()->valueAt(i);
     if (thisLounge.usePartZLevel && !thisLounge.hidden.get()) {
-      // TODO: clear part's local drawables here once animator improvements merge
+      networkedAnimator()->setPartDrawables(thisLounge.part, {});
     }
   }
   for (size_t i = 0; i < loungePositions()->size(); ++i) {
     auto const& thisLounge = loungePositions()->valueAt(i);
     if (thisLounge.usePartZLevel && !thisLounge.hidden.get()) {
       for (auto id : entitiesLoungingIn(i)) {
+        auto offset = jsonToVec2F(networkedAnimator()->partProperty(thisLounge.part, thisLounge.partAnchor));
         if (auto entity = world()->get<LoungingEntity>(id)) {
-          entity->drawables();
-          // TODO: add drawables to part's local drawables here once animator improvements merge
+          auto drawables = entity->drawables();
+          Drawable::translateAll(drawables, offset);
+          networkedAnimator()->addPartDrawables(thisLounge.part, drawables);
         }
       }
     }

@@ -520,6 +520,7 @@ public:
   virtual LoungeableEntity::LoungePositions const* loungePositions() const override;
   virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
   virtual NetworkedAnimator const* networkedAnimator() const override;
+  virtual NetworkedAnimator * networkedAnimator()  override;
 
 private:
   typedef LuaMessageHandlingComponent<LuaStorableComponent<LuaActorMovementComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>>>> GenericScriptComponent;

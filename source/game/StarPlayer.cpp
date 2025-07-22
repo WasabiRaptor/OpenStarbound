@@ -423,7 +423,7 @@ void Player::uninit() {
 
 List<Drawable> Player::drawables(Vec2F position) {
   List<Drawable> drawables;
-
+  setupLoungingDrawables();
   if (!isTeleporting()) {
     drawables.appendAll(m_techController->backDrawables(position));
     auto anchor = as<LoungeAnchor>(m_movementController->entityAnchor());
@@ -2929,6 +2929,9 @@ EntityRenderLayer Player::loungeRenderLayer(size_t anchorPositionIndex) const {
 }
 
 NetworkedAnimator const* Player::networkedAnimator() const {
+  return humanoid()->networkedAnimator();
+}
+NetworkedAnimator * Player::networkedAnimator()  {
   return humanoid()->networkedAnimator();
 }
 
