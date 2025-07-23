@@ -226,11 +226,12 @@ public:
   virtual NetworkedAnimator const* networkedAnimator() const override;
   virtual NetworkedAnimator * networkedAnimator()  override;
 
+  LuaCallbacks makeNpcCallbacks();
+
 private:
   Vec2F getAbsolutePosition(Vec2F relativePosition) const;
 
   void tickShared(float dt);
-  LuaCallbacks makeNpcCallbacks();
 
   void setupNetStates();
   void getNetStates(bool initial);
