@@ -801,11 +801,6 @@ LuaCallbacks LuaBindings::makePlayerCallbacks(Player* player) {
     player->setAnimationParameter(name, value);
   });
 
-  callbacks.registerCallback("queueUIMessage", [player](String message) {
-    player->queueUIMessage(message);
-  });
-
-
   return callbacks;
 }
 
