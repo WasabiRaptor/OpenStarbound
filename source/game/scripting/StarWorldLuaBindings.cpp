@@ -820,6 +820,11 @@ namespace LuaBindings {
         return {};
       });
 
+    callbacks.registerCallback("entityLoungeAnchor", [world](EntityId entityId, int anchorIndex) -> JsonObject {
+        if (auto entity = world->get<LoungeableEntity>(entityId))
+          return entity->loungeAnchor(anchorIndex)->toJson();
+        return {};
+      });
   }
 
   void addWorldEnvironmentCallbacks(LuaCallbacks& callbacks, World* world) {
