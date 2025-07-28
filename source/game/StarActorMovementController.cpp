@@ -519,35 +519,10 @@ Vec2F ActorMovementController::position() const {
   return MovementController::position();
 }
 
-float ActorMovementController::xPosition() const {
-  return position()[0];
-}
-
-float ActorMovementController::yPosition() const {
-  return position()[1];
-}
-
 float ActorMovementController::rotation() const {
   if (m_entityAnchor)
     return m_entityAnchor->angle;
   return MovementController::rotation();
-}
-
-PolyF ActorMovementController::collisionBody() const {
-  auto collisionBody = MovementController::collisionPoly();
-  collisionBody.rotate(rotation());
-  collisionBody.translate(position());
-  return collisionBody;
-}
-
-RectF ActorMovementController::localBoundBox() const {
-  auto poly = MovementController::collisionPoly();
-  poly.rotate(rotation());
-  return poly.boundBox();
-}
-
-RectF ActorMovementController::collisionBoundBox() const {
-  return collisionBody().boundBox();
 }
 
 bool ActorMovementController::walking() const {
