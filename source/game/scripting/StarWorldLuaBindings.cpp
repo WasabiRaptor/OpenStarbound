@@ -685,6 +685,11 @@ namespace LuaBindings {
           return entity->movementController()->collisionBody().boundBox();
         return {};
       });
+    callbacks.registerCallback("entityCollisionArea", [world](EntityId entityId) -> Maybe<float> {
+      if (auto entity = world->get<ActorEntity>(entityId))
+        return entity->movementController()->collisionPoly().convexArea();
+      return {};
+    });
     callbacks.registerCallback("entityLocalBoundBox", [world](EntityId entityId) -> Maybe<RectF> {
         if (auto entity = world->get<ActorEntity>(entityId))
           return entity->movementController()->localBoundBox();
