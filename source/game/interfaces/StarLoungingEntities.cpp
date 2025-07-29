@@ -315,6 +315,17 @@ void LoungeableEntity::setupLoungingDrawables() {
         auto offset = jsonToVec2F(networkedAnimator()->partProperty(thisLounge.part, thisLounge.partAnchor));
         if (auto entity = world()->get<LoungingEntity>(id)) {
           auto drawables = entity->drawables();
+          Mat3F partTransformation = networkedAnimator()->finalPartTransformation(thisLounge.part);
+          auto direction = partTransformation.determinant() > 0 ? 1 : -1;
+
+          // entities are handling their flipping and rotations themselves, so kinda, undo those
+          Drawable::scaleAll(drawables, Vec2F(direction, 1));
+          if (networkedAnimator()->flipped()) {
+            Drawable::rotateAll(drawables, partTransformation.transformAngle(0.0f) + (Star::Constants::pi)); // just needs to rotate around
+          } else {
+            Drawable::rotateAll(drawables, -partTransformation.transformAngle(0.0f));
+          }
+
           Drawable::translateAll(drawables, offset);
           networkedAnimator()->addPartDrawables(thisLounge.part, drawables);
         }
