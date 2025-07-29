@@ -1432,6 +1432,9 @@ List<Drawable> Humanoid::renderPortrait(PortraitMode mode) const {
   if (m_animationConfig.isValid()) {
     auto portraitAnimator = m_networkedAnimator;
     portraitAnimator.setFlipped(false);
+    for (auto p : portraitAnimator.partNames()) {
+      portraitAnimator.setPartDrawables(p, {});
+    }
     portraitAnimator.setPartDrawables(m_frontItemPart, {});
     portraitAnimator.setPartDrawables(m_backItemPart, {});
     portraitAnimator.resetLocalTransformationGroup("headRotation");
