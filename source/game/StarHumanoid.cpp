@@ -2306,6 +2306,7 @@ LoungeableEntity::LoungePositions const* NetHumanoid::loungePositions() const {
 }
 
 void NetHumanoid::setupNetElements() {
+  clearNetElements();
   addNetElement(m_humanoid->networkedAnimator());
 
   for (auto const& pair : m_humanoid->humanoidConfig(false).getObject("loungePositions", JsonObject())) {
