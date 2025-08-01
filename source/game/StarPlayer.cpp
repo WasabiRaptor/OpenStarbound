@@ -376,7 +376,7 @@ void Player::init(World* world, EntityId entityId, EntityMode mode) {
   }
 
   if (world->isClient()) {
-      m_scriptedAnimator.setScripts(speciesDefinition->animationScripts());
+      m_scriptedAnimator.setScripts(humanoid()->animationScripts());
       m_scriptedAnimator.addCallbacks("animationConfig", LuaBindings::makeScriptedAnimatorCallbacks(humanoid()->networkedAnimator(),
         [this](String const& name, Json const& defaultValue) -> Json {
           return m_scriptedAnimationParameters.value(name, defaultValue);
@@ -2289,8 +2289,23 @@ void Player::updateIdentity() {
   }
 }
 
+void Player::setHumanoidParameter(String key, Maybe<Json> value) {
+  if (value.isValid())
+    m_humanoidParameters.set(key, value.value());
+  else
+    m_humanoidParameters.erase(key);
+
+  m_netHumanoid.netElements().last()->setHumanoidParameters(m_humanoidParameters);
+}
+
+Maybe<Json> Player::getHumanoidParameter(String key) {
+  return m_humanoidParameters.maybe(key);
+}
+
 void Player::setHumanoidParameters(JsonObject parameters) {
   m_humanoidParameters = parameters;
+
+  m_netHumanoid.netElements().last()->setHumanoidParameters(m_humanoidParameters);
 }
 
 JsonObject Player::getHumanoidParameters() {
@@ -2877,6 +2892,8 @@ void Player::refreshHumanoidParameters() {
     m_deathParticleBurst.set(humanoid()->defaultDeathParticles());
     m_statusController->setStatusProperty("ouchNoise", speciesDef->ouchNoise(m_identity.gender));
     m_scriptedAnimationParameters.clear();
+  } else {
+    m_humanoidParameters = m_netHumanoid.netElements().last()->humanoidParameters();
   }
   auto armor = m_armor->diskStore();
   m_armor->reset();
@@ -2904,7 +2921,7 @@ void Player::refreshHumanoidParameters() {
       m_scriptedAnimator.removeCallbacks("animationConfig");
       m_scriptedAnimator.removeCallbacks("entity");
 
-      m_scriptedAnimator.setScripts(speciesDef->animationScripts());
+      m_scriptedAnimator.setScripts(humanoid()->animationScripts());
       m_scriptedAnimator.addCallbacks("animationConfig", LuaBindings::makeScriptedAnimatorCallbacks(humanoid()->networkedAnimator(),
         [this](String const& name, Json const& defaultValue) -> Json {
           return m_scriptedAnimationParameters.value(name, defaultValue);

@@ -153,6 +153,8 @@ public:
 
   bool loadConfig(Json merger = JsonObject(), bool forceRefresh = false);
   void loadAnimation();
+  void setHumanoidParameters(JsonObject parameters);
+
   // All of the image identifiers here are meant to be image *base* names, with
   // a collection of frames specific to each piece.  If an image is set to
   // empty string, it is disabled.
@@ -315,6 +317,7 @@ public:
   NetworkedAnimator * networkedAnimator();
   NetworkedAnimator const* networkedAnimator() const;
   NetworkedAnimator::DynamicTarget * networkedAnimatorDynamicTarget();
+  List<String> animationScripts() const;
 
   Json humanoidConfig(bool withOverrides = true);
 
@@ -447,10 +450,12 @@ private:
 
   Json m_defaultMovementParameters;
   Maybe<Json> m_playerMovementParameters;
-  Maybe<Json> m_animationConfig;
+  bool m_useAnimation;
 
   NetworkedAnimator m_networkedAnimator;
   NetworkedAnimator::DynamicTarget m_networkedAnimatorDynamicTarget;
+
+  List<String> m_animationScripts;
 
   struct AnimationStateArgs {
     String state;
@@ -483,21 +488,28 @@ private:
 
 // this is because species can be changed on the fly and therefore the humanoid needs to re-initialize as the new species when it changes
 // therefore we need to have these in a dynamic group in players and NPCs for the sake of the networked animator not breaking the game
-class NetHumanoid : public NetElementGroup {
+class NetHumanoid : public NetElementSyncGroup {
 public:
   NetHumanoid(HumanoidIdentity identity = HumanoidIdentity(), JsonObject parameters = JsonObject(), Json config = Json());
 
   void netStore(DataStream& ds, NetCompatibilityRules rules = {}) const override;
   void netLoad(DataStream& ds, NetCompatibilityRules rules) override;
 
+  void netElementsNeedLoad(bool full) override;
+  void netElementsNeedStore() override;
+
   HumanoidPtr humanoid();
   LoungeableEntity::LoungePositions* loungePositions();
   LoungeableEntity::LoungePositions const* loungePositions() const;
+
+  void setHumanoidParameters(JsonObject parameters);
+  JsonObject humanoidParameters();
+
 private:
   void setupNetElements();
 
   Json m_config;
-  JsonObject m_parameters;
+  NetElementHashMap<String,Json> m_humanoidParameters;
   HumanoidPtr m_humanoid;
   LoungeableEntity::LoungePositions m_loungePositions;
 };

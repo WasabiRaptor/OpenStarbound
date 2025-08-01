@@ -295,16 +295,12 @@ Humanoid::Humanoid(Json const& config) : Humanoid() {
   m_baseConfig = config;
   loadConfig(JsonObject());
   loadAnimation();
-  String animationPath = ("/humanoid/" + m_identity.imagePath.value(m_identity.species) + "/");
-  m_networkedAnimator = m_animationConfig.isValid() ? NetworkedAnimator(*m_animationConfig, animationPath) : NetworkedAnimator();
 }
 
 Humanoid::Humanoid(HumanoidIdentity const& identity, JsonObject parameters, Json config) : Humanoid() {
   m_baseConfig = (Root::singleton().speciesDatabase()->humanoidConfig(identity, parameters, config));
   loadConfig(JsonObject());
   loadAnimation();
-  String animationPath = ("/humanoid/" + identity.imagePath.value(identity.species) + "/");
-  m_networkedAnimator = m_animationConfig.isValid() ? NetworkedAnimator(*m_animationConfig, animationPath) : NetworkedAnimator();
   setIdentity(identity);
 }
 
@@ -325,7 +321,7 @@ void Humanoid::setIdentity(HumanoidIdentity const& identity) {
   if (m_useBodyHeadMask) {
     m_bodyHeadMaskFrameset = getBodyHeadMaskFromIdentity();
   }
-  if (m_animationConfig.isValid()) {
+  if (m_useAnimation) {
     m_networkedAnimator.setLocalTag("name", m_identity.name);
     m_networkedAnimator.setLocalTag("species", m_identity.species);
     m_networkedAnimator.setLocalTag("gender", GenderNames.getRight(m_identity.gender));
@@ -352,6 +348,11 @@ void Humanoid::setIdentity(HumanoidIdentity const& identity) {
 
 HumanoidIdentity const& Humanoid::identity() const {
   return m_identity;
+}
+
+void Humanoid::setHumanoidParameters(JsonObject parameters){
+  m_baseConfig = jsonMerge(m_baseConfig, parameters);
+  loadConfig(take(m_mergeConfig), true);
 }
 
 bool Humanoid::loadConfig(Json merger, bool forceRefresh) {
@@ -426,14 +427,20 @@ bool Humanoid::loadConfig(Json merger, bool forceRefresh) {
 }
 
 void Humanoid::loadAnimation() {
-  m_animationConfig = m_baseConfig.opt("animation");
+  auto animationConfig = m_baseConfig.opt("animation");
+  m_useAnimation = animationConfig.isValid();
+
+  m_animationScripts = jsonToStringList(m_baseConfig.getArray("animationScripts", JsonArray()));
 
   m_animationStates.clear();
   m_animationStatesBackwards.clear();
   m_emoteAnimationStates.clear();
   m_portraitAnimationStates.clear();
 
-  if (m_animationConfig.isValid()) {
+  String animationPath = ("/humanoid/" + m_identity.imagePath.value(m_identity.species) + "/");
+  m_networkedAnimator = m_useAnimation ? NetworkedAnimator(*animationConfig, animationPath) : NetworkedAnimator();
+
+  if (m_useAnimation) {
     m_frontItemPart = m_baseConfig.getString("frontHandItemPart", "frontHandItem");
     m_backItemPart = m_baseConfig.getString("backHandItemPart", "backHandItem");
 
@@ -491,7 +498,7 @@ void Humanoid::wearableRemoved(Wearable const& wearable) {
   auto& fashion = *m_fashion;
 
   auto setTags = [&](HashMap<String,String> tags) {
-    if (m_animationConfig.isValid())
+    if (m_useAnimation)
       for (auto tag : tags) {
         m_networkedAnimator.setLocalTag(tag.first);
       }
@@ -629,7 +636,7 @@ void Humanoid::refreshWearables(Fashion& fashion) {
     fashion.helmetMaskDirectivesGroup.clear();
 
   auto setTags = [&](HashMap<String,String> tags) {
-    if (m_animationConfig.isValid())
+    if (m_useAnimation)
       for (auto tag : tags) {
         m_networkedAnimator.setLocalTag(tag.first, tag.second);
       }
@@ -669,7 +676,7 @@ void Humanoid::refreshWearables(Fashion& fashion) {
     });
   }
 
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     m_networkedAnimator.setLocalTag("helmetMaskDirectives", fashion.helmetMaskDirectivesGroup.toString());
 
   fashion.wornHeadsChanged = fashion.wornChestsLegsChanged = fashion.wornBacksChanged = fashion.helmetMasksChanged = false;
@@ -746,7 +753,7 @@ void Humanoid::setState(State state) {
   if (m_state != state) {
     m_state = state;
     m_animationTimer = 0.0f;
-    if (m_animationConfig.isValid())
+    if (m_useAnimation)
       refreshAnimationState();
 
   }
@@ -756,7 +763,7 @@ void Humanoid::setEmoteState(HumanoidEmote state) {
   if (m_emoteState != state) {
     m_emoteState = state;
     m_emoteAnimationTimer = 0.0f;
-    if (m_animationConfig.isValid()) {
+    if (m_useAnimation) {
       if (auto animationStates = m_emoteAnimationStates.maybe(m_emoteState))
         for (auto args : *animationStates)
           m_networkedAnimator.setLocalState(args.first, args.second.state, args.second.startNew, args.second.reverse);
@@ -767,7 +774,7 @@ void Humanoid::setEmoteState(HumanoidEmote state) {
 void Humanoid::setDance(Maybe<String> const& dance) {
   if (m_dance != dance) {
     m_danceTimer = 0.0f;
-    if (m_animationConfig.isValid() && dance.isValid() && m_networkedAnimator.hasState("dance", dance.value()))
+    if (m_useAnimation && dance.isValid() && m_networkedAnimator.hasState("dance", dance.value()))
       m_networkedAnimator.setLocalState("dance", dance.value());
   }
   m_dance = dance;
@@ -775,14 +782,14 @@ void Humanoid::setDance(Maybe<String> const& dance) {
 
 void Humanoid::setFacingDirection(Direction facingDirection) {
   m_facingDirection = facingDirection;
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     m_networkedAnimator.setFlipped(m_facingDirection == Direction::Left);
 }
 
 void Humanoid::setMovingBackwards(bool movingBackwards) {
   if (m_movingBackwards != movingBackwards) {
     m_movingBackwards = movingBackwards;
-    if (m_animationConfig.isValid())
+    if (m_useAnimation)
       refreshAnimationState();
   }
 }
@@ -878,7 +885,7 @@ void Humanoid::animate(float dt) {
   float headRotationTarget = globalHeadRotation() ? m_headRotationTarget : 0.f;
   m_headRotation = (headRotationTarget - (headRotationTarget - m_headRotation) * powf(.333333f, dt * 60.f));
 
-  if (m_animationConfig.isValid()) {
+  if (m_useAnimation) {
     m_networkedAnimator.update(dt, networkedAnimatorDynamicTarget());
   }
 }
@@ -889,7 +896,7 @@ void Humanoid::resetAnimation() {
   m_danceTimer = 0.0f;
   m_headRotation = globalHeadRotation() ? 0.f : m_headRotationTarget;
 
-  if (m_animationConfig.isValid()) {
+  if (m_useAnimation) {
     m_networkedAnimator.finishAnimations();
     // reset set all animations and force startnew
     if (auto animationStates = m_emoteAnimationStates.maybe(m_emoteState))
@@ -927,7 +934,7 @@ List<Drawable> Humanoid::render(bool withItems, bool withRotationAndScale) {
   if (backHand.recoil)
     backArmFrameOffset += m_recoilOffset;
 
-  if (m_animationConfig.isValid()) {
+  if (m_useAnimation) {
     m_networkedAnimator.resetLocalTransformationGroup("headRotation");
     for (uint8_t i : fashion.wornBacks) {
       if (i == 0)
@@ -1429,7 +1436,7 @@ List<Drawable> Humanoid::renderPortrait(PortraitMode mode) const {
   ((Humanoid*)this)->refreshWearables(fashion); // bleh
   List<Drawable> drawables;
 
-  if (m_animationConfig.isValid()) {
+  if (m_useAnimation) {
     auto portraitAnimator = m_networkedAnimator;
     portraitAnimator.setFlipped(false);
     for (auto p : portraitAnimator.partNames()) {
@@ -1464,7 +1471,7 @@ List<Drawable> Humanoid::renderPortrait(PortraitMode mode) const {
     if (mode == PortraitMode::FullNude || mode == PortraitMode::FullNeutralNude) {
       portraitAnimator.setLocalTag("helmetMaskDirectives");
       auto setTags = [&](HashMap<String,String> tags) {
-      if (m_animationConfig.isValid())
+      if (m_useAnimation)
         for (auto tag : tags) {
           portraitAnimator.setLocalTag(tag.first);
         }
@@ -1723,7 +1730,7 @@ Vec2F Humanoid::altHandPosition(Vec2F const& offset) const {
 }
 
 Vec2F Humanoid::primaryArmPosition(Direction facingDirection, float armAngle, Vec2F const& offset) const {
-  if (m_animationConfig.isValid()){
+  if (m_useAnimation){
     // does the animator being configurable overcomplicate some things? yeah probably
     Vec2F rotationCenter;
     String anchor;
@@ -1790,7 +1797,7 @@ Vec2F Humanoid::primaryArmPosition(Direction facingDirection, float armAngle, Ve
 }
 
 Vec2F Humanoid::altArmPosition(Direction facingDirection, float armAngle, Vec2F const& offset) const {
-  if (m_animationConfig.isValid()){
+  if (m_useAnimation){
     // does the animator being configurable overcomplicate some things? yeah probably
     Vec2F rotationCenter;
     String anchor;
@@ -1857,7 +1864,7 @@ Vec2F Humanoid::altArmPosition(Direction facingDirection, float armAngle, Vec2F 
 }
 
 Vec2F Humanoid::primaryHandOffset(Direction facingDirection) const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     if (facingDirection == Direction::Left || m_twoHanded)
       return jsonToVec2F(m_networkedAnimator.partProperty(m_frontItemPart,"offset")) - jsonToVec2F(m_networkedAnimator.partProperty(m_frontArmRotationPoint.first,m_frontArmRotationPoint.second));
     else
@@ -1870,7 +1877,7 @@ Vec2F Humanoid::primaryHandOffset(Direction facingDirection) const {
 }
 
 Vec2F Humanoid::altHandOffset(Direction facingDirection) const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     if (facingDirection == Direction::Left || m_twoHanded)
       return jsonToVec2F(m_networkedAnimator.partProperty(m_backItemPart,"offset")) - jsonToVec2F(m_networkedAnimator.partProperty(m_backArmRotationPoint.first,m_backArmRotationPoint.second));
     else
@@ -2123,7 +2130,7 @@ Vec2F Humanoid::mouthOffset(bool ignoreAdjustments) const {
   if (ignoreAdjustments) {
     return (m_mouthOffset).rotate(m_rotation);
   } else {
-    if (m_animationConfig.isValid())
+    if (m_useAnimation)
       return m_networkedAnimator.partPoint(m_mouthOffsetPoint.first, m_mouthOffsetPoint.second).value(m_mouthOffset).rotate(m_rotation);
 
     Vec2F headPosition(0, getBobYOffset());
@@ -2145,13 +2152,13 @@ Vec2F Humanoid::mouthOffset(bool ignoreAdjustments) const {
 }
 
 Vec2F Humanoid::feetOffset() const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     return m_networkedAnimator.partPoint(m_feetOffsetPoint.first, m_feetOffsetPoint.second).value(m_feetOffset).rotate(m_rotation);
   return m_feetOffset.rotate(m_rotation);
 }
 
 Vec2F Humanoid::headArmorOffset() const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     return m_networkedAnimator.partPoint(m_headArmorOffsetPoint.first, m_headArmorOffsetPoint.second).value(m_headArmorOffset).rotate(m_rotation);
 
   Vec2F headPosition(0, getBobYOffset());
@@ -2172,7 +2179,7 @@ Vec2F Humanoid::headArmorOffset() const {
 }
 
 Vec2F Humanoid::chestArmorOffset() const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     return m_networkedAnimator.partPoint(m_chestArmorOffsetPoint.first, m_chestArmorOffsetPoint.second).value(m_chestArmorOffset).rotate(m_rotation);
 
   Vec2F position(0, getBobYOffset());
@@ -2180,13 +2187,13 @@ Vec2F Humanoid::chestArmorOffset() const {
 }
 
 Vec2F Humanoid::legsArmorOffset() const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     return m_networkedAnimator.partPoint(m_legsArmorOffsetPoint.first, m_legsArmorOffsetPoint.second).value(m_legsArmorOffset).rotate(m_rotation);
   return m_legsArmorOffset.rotate(m_rotation);
 }
 
 Vec2F Humanoid::backArmorOffset() const {
-  if (m_animationConfig.isValid())
+  if (m_useAnimation)
     return m_networkedAnimator.partPoint(m_backArmorOffsetPoint.first, m_backArmorOffsetPoint.second).value(m_backArmorOffset).rotate(m_rotation);
   Vec2F position(0, getBobYOffset());
   return (m_backArmorOffset + position).rotate(m_rotation);
@@ -2262,6 +2269,10 @@ NetworkedAnimator::DynamicTarget * Humanoid::networkedAnimatorDynamicTarget() {
   return &m_networkedAnimatorDynamicTarget;
 }
 
+List<String> Humanoid::animationScripts() const {
+  return m_animationScripts;
+}
+
 Json Humanoid::humanoidConfig(bool withOverrides) {
   if (withOverrides)
     return jsonMerge(m_baseConfig, m_mergeConfig);
@@ -2270,7 +2281,7 @@ Json Humanoid::humanoidConfig(bool withOverrides) {
 
 NetHumanoid::NetHumanoid(HumanoidIdentity identity, JsonObject parameters, Json config) {
   m_config = config;
-  m_parameters = parameters;
+  m_humanoidParameters.reset(parameters);
   m_humanoid = make_shared<Humanoid>(identity, parameters, config);
   setupNetElements();
 }
@@ -2279,20 +2290,32 @@ void NetHumanoid::netStore(DataStream& ds, NetCompatibilityRules rules) const {
   if (!checkWithRules(rules)) return;
   auto identity = m_humanoid->identity();
   ds.write(identity);
-  ds.write(m_parameters);
+  JsonObject parameters = m_humanoidParameters.baseMap();
+  ds.write(parameters);
   ds.write(m_config);
-  NetElementGroup::netStore(ds, rules);
+  NetElementSyncGroup::netStore(ds, rules);
 }
 
 void NetHumanoid::netLoad(DataStream& ds, NetCompatibilityRules rules) {
   if (!checkWithRules(rules)) return;
   HumanoidIdentity identity;
   ds.read(identity);
-  ds.read(m_parameters);
+  JsonObject parameters;
+  ds.read(parameters);
+  m_humanoidParameters.reset(parameters);
   ds.read(m_config);
-  m_humanoid = make_shared<Humanoid>(identity, m_parameters, m_config);
+  m_humanoid = make_shared<Humanoid>(identity, parameters, m_config);
   setupNetElements();
-  NetElementGroup::netLoad(ds, rules);
+  NetElementSyncGroup::netLoad(ds, rules);
+}
+
+void NetHumanoid::netElementsNeedLoad(bool initial) {
+}
+
+void NetHumanoid::netElementsNeedStore() {
+  if (m_humanoidParameters.pullUpdated()) {
+    m_humanoid->setHumanoidParameters(m_humanoidParameters.baseMap());
+  }
 }
 
 HumanoidPtr NetHumanoid::humanoid() {
@@ -2305,9 +2328,19 @@ LoungeableEntity::LoungePositions const* NetHumanoid::loungePositions() const {
   return &m_loungePositions;
 }
 
+JsonObject NetHumanoid::humanoidParameters() {
+  return m_humanoidParameters.baseMap();
+}
+
+void NetHumanoid::setHumanoidParameters(JsonObject parameters) {
+  m_humanoidParameters.reset(parameters);
+  m_humanoid->setHumanoidParameters(parameters);
+}
+
 void NetHumanoid::setupNetElements() {
   clearNetElements();
   addNetElement(m_humanoid->networkedAnimator());
+  addNetElement(&m_humanoidParameters);
 
   for (auto const& pair : m_humanoid->humanoidConfig(false).getObject("loungePositions", JsonObject())) {
     m_loungePositions.set(pair.first, LoungeableEntity::LoungePositionConfig(pair.second));
@@ -2317,5 +2350,4 @@ void NetHumanoid::setupNetElements() {
     p.second.setupNetStates(this, 10);
   }
 }
-
 }

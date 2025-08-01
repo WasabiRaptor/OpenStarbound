@@ -208,9 +208,7 @@ void Npc::init(World* world, EntityId entityId, EntityMode mode) {
     m_scriptComponent.init(world);
   }
   if (world->isClient()) {
-    auto speciesDatabase = Root::singleton().speciesDatabase();
-    auto speciesDef = speciesDatabase->species(m_npcVariant.humanoidIdentity.species);
-    m_scriptedAnimator.setScripts(speciesDef->animationScripts());
+    m_scriptedAnimator.setScripts(humanoid()->animationScripts());
     m_scriptedAnimator.addCallbacks("animationConfig", LuaBindings::makeScriptedAnimatorCallbacks(humanoid()->networkedAnimator(),
       [this](String const& name, Json const& defaultValue) -> Json {
         return m_scriptedAnimationParameters.value(name, defaultValue);
@@ -707,6 +705,8 @@ LuaCallbacks Npc::makeNpcCallbacks() {
 
   callbacks.registerCallback("humanoidIdentity", [this]() { return humanoid()->identity().toJson(); });
   callbacks.registerCallback("setHumanoidIdentity", [this](Json const& id) { setIdentity(HumanoidIdentity(id)); });
+  callbacks.registerCallback("setHumanoidParameter", [this](String key, Maybe<Json> value) { setHumanoidParameter(key, value); });
+  callbacks.registerCallback("getHumanoidParameter", [this](String key) -> Maybe<Json> { return getHumanoidParameter(key); });
   callbacks.registerCallback("setHumanoidParameters", [this](JsonObject parameters) { setHumanoidParameters(parameters); });
   callbacks.registerCallback("getHumanoidParameters", [this]() -> JsonObject { return getHumanoidParameters(); });
   callbacks.registerCallback("refreshHumanoidParameters", [this]() { refreshHumanoidParameters(); });
@@ -1355,10 +1355,27 @@ void Npc::setIdentity(HumanoidIdentity identity) {
   updateIdentity();
 }
 
-void Npc::setHumanoidParameters(JsonObject parameters) {
-  m_npcVariant.overrides.set("humanoidParameters", parameters);
-  m_npcVariant.humanoidParameters = parameters;
+void Npc::setHumanoidParameter(String key, Maybe<Json> value) {
+  if (value.isValid())
+    m_npcVariant.humanoidParameters.set(key, value.value());
+  else
+    m_npcVariant.humanoidParameters.erase(key);
+
+  m_npcVariant.overrides.set("humanoidParameters", m_npcVariant.humanoidParameters);
+  m_netHumanoid.netElements().last()->setHumanoidParameters(m_npcVariant.humanoidParameters);
 }
+
+Maybe<Json> Npc::getHumanoidParameter(String key) {
+  return m_npcVariant.humanoidParameters.maybe(key);
+}
+
+void Npc::setHumanoidParameters(JsonObject parameters) {
+  m_npcVariant.humanoidParameters = parameters;
+
+  m_npcVariant.overrides.set("humanoidParameters", m_npcVariant.humanoidParameters);
+  m_netHumanoid.netElements().last()->setHumanoidParameters(m_npcVariant.humanoidParameters);
+}
+
 
 JsonObject Npc::getHumanoidParameters() {
   return m_npcVariant.humanoidParameters;
@@ -1470,6 +1487,8 @@ void Npc::refreshHumanoidParameters() {
     m_netHumanoid.clearNetElements();
     m_netHumanoid.addNetElement(make_shared<NetHumanoid>(m_npcVariant.humanoidIdentity, m_npcVariant.humanoidParameters, m_npcVariant.uniqueHumanoidConfig ? m_npcVariant.humanoidConfig : Json()));
     m_deathParticleBurst.set(humanoid()->defaultDeathParticles());
+  }else {
+    m_npcVariant.humanoidParameters = m_netHumanoid.netElements().last()->humanoidParameters();
   }
 
   auto armor = m_armor->diskStore();
@@ -1497,7 +1516,7 @@ void Npc::refreshHumanoidParameters() {
       m_scriptedAnimator.removeCallbacks("config");
       m_scriptedAnimator.removeCallbacks("entity");
 
-      m_scriptedAnimator.setScripts(speciesDef->animationScripts());
+      m_scriptedAnimator.setScripts(humanoid()->animationScripts());
       m_scriptedAnimator.addCallbacks("animationConfig", LuaBindings::makeScriptedAnimatorCallbacks(humanoid()->networkedAnimator(),
         [this](String const& name, Json const& defaultValue) -> Json {
           return m_scriptedAnimationParameters.value(name, defaultValue);
