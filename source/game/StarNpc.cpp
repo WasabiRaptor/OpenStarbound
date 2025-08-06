@@ -531,10 +531,16 @@ void Npc::render(RenderCallback* renderCallback) {
   if (loungeAnchor && loungeAnchor->hidden) {
     m_statusController->pullNewParticles();
     m_npcVariant.splashConfig.doSplash(position(), m_movementController->velocity(), world());
+    humanoid()->networkedAnimatorDynamicTarget()->pullNewParticles();
+    humanoid()->networkedAnimatorDynamicTarget()->pullNewAudios();
   } else {
     renderCallback->addParticles(m_statusController->pullNewParticles());
     renderCallback->addParticles(m_npcVariant.splashConfig.doSplash(position(), m_movementController->velocity(), world()));
+    renderCallback->addParticles(humanoid()->networkedAnimatorDynamicTarget()->pullNewParticles());
+    renderCallback->addAudios(humanoid()->networkedAnimatorDynamicTarget()->pullNewAudios());
+
   }
+
 
   renderCallback->addAudios(m_statusController->pullNewAudios());
 
@@ -548,6 +554,7 @@ List<Drawable> Npc::drawables(Vec2F position) {
   List<Drawable> drawables;
   m_tools->setupHumanoidHandItemDrawables(*humanoid());
   auto anchor = as<LoungeAnchor>(m_movementController->entityAnchor());
+  clearLoungingDrawables();
   setupLoungingDrawables();
   DirectivesGroup humanoidDirectives;
   Vec2F scale = Vec2F::filled(1.f);
@@ -558,7 +565,7 @@ List<Drawable> Npc::drawables(Vec2F position) {
   }
   humanoid()->setScale(scale * m_movementController->getScale());
 
-  for (auto& drawable : humanoid()->render()) {
+  for (auto& drawable : humanoid()->render(true, true, (!anchor || !anchor->usePartZLevel), true)) {
     drawable.translate(position);
     if (drawable.isImage()) {
       drawable.imagePart().addDirectivesGroup(humanoidDirectives, true);

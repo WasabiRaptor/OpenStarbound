@@ -301,33 +301,27 @@ LuaCallbacks LoungeableEntity::addLoungeableCallbacks(LuaCallbacks callbacks){
   return callbacks;
 }
 
-void LoungeableEntity::setupLoungingDrawables() {
+void LoungeableEntity::clearLoungingDrawables() {
   for (size_t i = 0; i < loungePositions()->size(); ++i) {
     auto const& thisLounge = loungePositions()->valueAt(i);
     if (thisLounge.usePartZLevel && !thisLounge.hidden.get()) {
       networkedAnimator()->setPartDrawables(thisLounge.part, {});
     }
   }
+}
+
+void LoungeableEntity::setupLoungingDrawables(Vec2F scale) {
   for (size_t i = 0; i < loungePositions()->size(); ++i) {
     auto const& thisLounge = loungePositions()->valueAt(i);
     if (thisLounge.usePartZLevel && !thisLounge.hidden.get()) {
       for (auto id : entitiesLoungingIn(i)) {
         auto offset = jsonToVec2F(networkedAnimator()->partProperty(thisLounge.part, thisLounge.partAnchor));
         if (auto entity = world()->get<LoungingEntity>(id)) {
-          auto drawables = entity->drawables();
           Mat3F partTransformation = networkedAnimator()->finalPartTransformation(thisLounge.part);
-          auto direction = partTransformation.determinant() > 0 ? 1 : -1;
-
-          // entities are handling their flipping and rotations themselves, so kinda, undo those
-          Drawable::scaleAll(drawables, Vec2F(direction, 1));
-          if (networkedAnimator()->flipped()) {
-            Drawable::rotateAll(drawables, partTransformation.transformAngle(0.0f) + (Star::Constants::pi)); // just needs to rotate around
-          } else {
-            Drawable::rotateAll(drawables, -partTransformation.transformAngle(0.0f));
-          }
-
-          Drawable::translateAll(drawables, offset);
-          networkedAnimator()->addPartDrawables(thisLounge.part, drawables);
+          auto drawables = entity->drawables();
+          Drawable::scaleAll(drawables, Vec2F(scale[0] * (partTransformation.determinant() > 0 ? 1 : -1), scale[1]));
+          Drawable::translateAll(drawables, jsonToVec2F(networkedAnimator()->partProperty(thisLounge.part, thisLounge.partAnchor)));
+          networkedAnimator()->setPartDrawables(thisLounge.part, drawables);
         }
       }
     }

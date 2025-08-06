@@ -425,6 +425,7 @@ void Player::uninit() {
 
 List<Drawable> Player::drawables(Vec2F position) {
   List<Drawable> drawables;
+  clearLoungingDrawables();
   setupLoungingDrawables();
   if (!isTeleporting()) {
     drawables.appendAll(m_techController->backDrawables(position));
@@ -447,7 +448,7 @@ List<Drawable> Player::drawables(Vec2F position) {
       extractScale(m_statusController->parentDirectives().list());
       humanoid()->setScale(scale * m_movementController->getScale());
 
-      for (auto& drawable : humanoid()->render()) {
+      for (auto& drawable : humanoid()->render(true, true, (!anchor || !anchor->usePartZLevel), true)) {
         drawable.translate(position + (m_techController->parentOffset() * m_movementController->getScale()));
         if (drawable.isImage()) {
           drawable.imagePart().addDirectivesGroup(humanoidDirectives, true);
