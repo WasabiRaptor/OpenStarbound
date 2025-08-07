@@ -879,16 +879,14 @@ bool Humanoid::handHoldingItem(ToolHand hand) const {
   return getHand(hand).holdingItem;
 }
 
-void Humanoid::animate(float dt) {
+void Humanoid::animate(float dt, NetworkedAnimator::DynamicTarget * dynamicTarget) {
   m_animationTimer += dt;
   m_emoteAnimationTimer += dt;
   m_danceTimer += dt;
   float headRotationTarget = globalHeadRotation() ? m_headRotationTarget : 0.f;
   m_headRotation = (headRotationTarget - (headRotationTarget - m_headRotation) * powf(.333333f, dt * 60.f));
 
-  if (m_useAnimation) {
-    m_networkedAnimator.update(dt, networkedAnimatorDynamicTarget());
-  }
+  m_networkedAnimator.update(dt, dynamicTarget);
 }
 
 void Humanoid::resetAnimation() {
@@ -977,6 +975,9 @@ List<Drawable> Humanoid::render(bool withItems, bool withHeadRotation, bool with
         auto danceFrame = danceStep->bodyFrame.value();
         m_networkedAnimator.setLocalTag("bodyDanceFrame", danceFrame);
         m_networkedAnimator.setLocalState("bodyDance", m_networkedAnimator.hasState("bodyDance", danceFrame) ? danceFrame : "dance");
+      } else {
+        m_networkedAnimator.setLocalState("bodyDance", "idle");
+        m_networkedAnimator.setLocalTag("bodyDanceFrame");
       }
 
       m_networkedAnimator.translateLocalTransformationGroup("backArmRotation", danceStep->backArmOffset / TilePixels);
@@ -985,6 +986,9 @@ List<Drawable> Humanoid::render(bool withItems, bool withHeadRotation, bool with
         auto danceFrame = danceStep->backArmFrame.value();
         m_networkedAnimator.setLocalTag("backArmDanceFrame", danceFrame);
         m_networkedAnimator.setLocalState("backArmDance", m_networkedAnimator.hasState("backArmDance", danceFrame) ? danceFrame : "dance");
+      } else {
+        m_networkedAnimator.setLocalState("backArmDance", "idle");
+        m_networkedAnimator.setLocalTag("backArmDanceFrame");
       }
       m_networkedAnimator.setLocalState("backArm", "idle");
 
@@ -994,11 +998,18 @@ List<Drawable> Humanoid::render(bool withItems, bool withHeadRotation, bool with
         auto danceFrame = danceStep->frontArmFrame.value();
         m_networkedAnimator.setLocalTag("frontArmDanceFrame", danceFrame);
         m_networkedAnimator.setLocalState("frontArmDance", m_networkedAnimator.hasState("frontArmDance", danceFrame) ? danceFrame : "dance");
+      } else {
+        m_networkedAnimator.setLocalState("frontArmDance", "idle");
+        m_networkedAnimator.setLocalTag("frontArmDanceFrame");
       }
       m_networkedAnimator.setLocalState("frontArm", "idle");
 
     } else {
+      m_networkedAnimator.setLocalState("bodyDance", "idle");
+      m_networkedAnimator.setLocalTag("bodyDanceFrame");
+
       m_networkedAnimator.setLocalState("backArmDance", "idle");
+      m_networkedAnimator.setLocalTag("backArmDanceFrame");
       m_networkedAnimator.rotateLocalTransformationGroup("backArmRotation",
         backHand.angle,
         jsonToVec2F(m_networkedAnimator.partProperty(m_backArmRotationPoint.first, m_backArmRotationPoint.second))
@@ -1016,6 +1027,7 @@ List<Drawable> Humanoid::render(bool withItems, bool withHeadRotation, bool with
       }
 
       m_networkedAnimator.setLocalState("frontArmDance", "idle");
+      m_networkedAnimator.setLocalTag("frontArmDanceFrame");
       m_networkedAnimator.rotateLocalTransformationGroup("frontArmRotation",
         frontHand.angle,
         jsonToVec2F(m_networkedAnimator.partProperty(m_frontArmRotationPoint.first, m_frontArmRotationPoint.second))
@@ -2263,10 +2275,6 @@ NetworkedAnimator * Humanoid::networkedAnimator() {
 }
 NetworkedAnimator const* Humanoid::networkedAnimator() const {
   return &m_networkedAnimator;
-}
-
-NetworkedAnimator::DynamicTarget * Humanoid::networkedAnimatorDynamicTarget() {
-  return &m_networkedAnimatorDynamicTarget;
 }
 
 List<String> Humanoid::animationScripts() const {

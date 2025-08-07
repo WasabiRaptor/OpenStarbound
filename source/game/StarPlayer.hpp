@@ -555,6 +555,7 @@ private:
   NetElementData<Maybe<String>> m_deathParticleBurst;
   LuaAnimationComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>> m_scriptedAnimator;
   NetElementHashMap<String, Json> m_scriptedAnimationParameters;
+  NetworkedAnimator::DynamicTarget m_humanoidDynamicTarget;
 
   PlayerConfigPtr m_config;
 
