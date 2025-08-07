@@ -447,4 +447,8 @@ void Pane::renderImpl() {
   }
 }
 
+Maybe<Json> Pane::receiveMessage(String const& message, bool localMessage, JsonArray const& args) {
+  return {};
+}
+
 }

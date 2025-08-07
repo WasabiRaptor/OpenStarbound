@@ -24,7 +24,7 @@ public:
   void tick(float dt) override;
 
   bool sendEvent(InputEvent const& event) override;
-  
+
   Json const& config() const;
   Json const& rawConfig() const;
 
@@ -33,6 +33,8 @@ public:
   PanePtr createTooltip(Vec2I const& screenPosition) override;
   Maybe<String> cursorOverride(Vec2I const& screenPosition) override;
   Maybe<ItemPtr> shiftItemFromInventory(ItemPtr const& input) override;
+
+  virtual Maybe<Json> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {}) override;
 
 protected:
   virtual GuiReaderPtr reader() override;
@@ -49,7 +51,7 @@ protected:
   bool m_interactive;
 
   bool m_callbacksAdded;
-  mutable LuaUpdatableComponent<LuaBaseComponent> m_script;
+  mutable LuaMessageHandlingComponent<LuaUpdatableComponent<LuaBaseComponent>> m_script;
 };
 
 }
