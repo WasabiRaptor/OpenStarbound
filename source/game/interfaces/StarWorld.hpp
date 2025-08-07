@@ -143,6 +143,9 @@ public:
 
   virtual LuaRootPtr luaRoot() = 0;
 
+  // get a unique entity's id, if they're already loaded
+  virtual EntityId uniqueEntityId(String const &uniqueId) = 0;
+
   // Locate a unique entity, if the target is local, the promise will be
   // finished before being returned.  If the unique entity is not found, the
   // promise will fail.

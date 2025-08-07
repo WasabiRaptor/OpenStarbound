@@ -2286,6 +2286,10 @@ LuaRootPtr WorldClient::luaRoot() {
   return m_luaRoot;
 }
 
+EntityId WorldClient::uniqueEntityId(String const& uniqueId) {
+  return m_entityMap->uniqueEntityId(uniqueId);
+}
+
 RpcPromise<Vec2F> WorldClient::findUniqueEntity(String const& uniqueId) {
   if (!inWorld())
     return RpcPromise<Vec2F>::createFailed("Not currently in a world");

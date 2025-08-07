@@ -25,7 +25,7 @@ BaseScriptPane::BaseScriptPane(Json config, bool construct) : Pane(), m_rawConfi
   } else {
     m_config = assets->fetchJson(config);
   }
-  
+
   m_interactive = m_config.getBool("interactive", true);
   m_reader = make_shared<GuiReader>();
   m_reader->registerCallback("close", [this](Widget*) { dismiss(); });
@@ -162,4 +162,7 @@ void BaseScriptPane::construct(Json config) {
   m_script.setUpdateDelta(m_config.getUInt("scriptDelta", 1));
 }
 
+Maybe<Json> BaseScriptPane::receiveMessage(String const& message, bool localMessage, JsonArray const& args) {
+  return m_script.handleMessage(message, localMessage, args);
+}
 }

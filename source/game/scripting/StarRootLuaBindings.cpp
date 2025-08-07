@@ -265,7 +265,9 @@ LuaCallbacks LuaBindings::makeRootCallbacks() {
     });
 
   callbacks.registerCallback("speciesConfig", [root](String const& species) -> Json {
-    return root->speciesDatabase()->species(species)->config();
+    if (root->speciesDatabase()->allSpecies().contains(species))
+      return root->speciesDatabase()->species(species)->config();
+    return Json();
   });
 
   callbacks.registerCallback("generateHumanoidIdentity", [root](String const& species, Maybe<uint64_t> seed, Maybe<String> gender) -> Json {
@@ -274,7 +276,9 @@ LuaCallbacks LuaBindings::makeRootCallbacks() {
     return identity.toJson();
   });
   callbacks.registerCallback("effectConfig", [root](String const& effect) -> Json {
-    return root->statusEffectDatabase()->uniqueEffectConfig(effect).toJson();
+    if (root->statusEffectDatabase()->isUniqueEffect(effect))
+      return root->statusEffectDatabase()->uniqueEffectConfig(effect).toJson();
+    return Json();
   });
 
   return callbacks;

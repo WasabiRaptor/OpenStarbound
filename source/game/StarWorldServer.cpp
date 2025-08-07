@@ -894,7 +894,7 @@ bool WorldServer::replaceTile(Vec2I const& pos, TileModification const& modifica
 
   if (!WorldImpl::validateTileReplacement(modification))
     return false;
-  
+
   if (auto placeMaterial = modification.ptr<PlaceMaterial>()) {
     if (!isTileConnectable(pos, placeMaterial->layer, true))
       return false;
@@ -907,7 +907,7 @@ bool WorldServer::replaceTile(Vec2I const& pos, TileModification const& modifica
 
       for (auto drop : destroyBlock(placeMaterial->layer, pos, harvested, !tileDamageIsPenetrating(damage.damageType()), false))
         addEntity(ItemDrop::createRandomizedDrop(drop, dropPosition));
-      
+
       return true;
     }
   }
@@ -943,13 +943,13 @@ TileModificationList WorldServer::replaceTiles(TileModificationList const& modif
         success.append(pair);
         continue;
       }
-      
+
       failures.append(pair);
     }
 
     if (!toDamage.empty())
       damageTiles(toDamage, layer, Vec2F(), tileDamage, Maybe<EntityId>());
-    
+
   } else {
     for (auto pair : modificationList) {
       if (replaceTile(pair.first, pair.second, tileDamage))
@@ -1055,7 +1055,7 @@ TileDamageResult WorldServer::damageTiles(List<Vec2I> const& positions, TileLaye
           }
         } else if (layer == TileLayer::Background && isRealMaterial(tile->background)) {
           tile->backgroundDamage.damage(damageParameters, sourcePosition, tileDamage);
-          
+
           // if the tile is broken, send a message back to the source entity with position and whether the tile was harvested
             if (sourceEntity.isValid() && tile->backgroundDamage.dead()) {
               sendEntityMessage(*sourceEntity, "tileBroken", {
@@ -1307,7 +1307,7 @@ void WorldServer::setTileProtection(DungeonId dungeonId, bool isProtected) {
   if (updated) {
     for (auto const& pair : m_clientInfo)
       pair.second->outgoingPackets.append(make_shared<UpdateTileProtectionPacket>(dungeonId, isProtected));
-  
+
     Logger::info("Protected dungeonIds for world set to {}", m_protectedDungeonIds);
   }
 }
@@ -2345,6 +2345,10 @@ float WorldServer::timeOfDay() const {
 
 LuaRootPtr WorldServer::luaRoot() {
   return m_luaRoot;
+}
+
+EntityId WorldServer::uniqueEntityId(String const& uniqueId) {
+  return m_entityMap->uniqueEntityId(uniqueId);
 }
 
 RpcPromise<Vec2F> WorldServer::findUniqueEntity(String const& uniqueId) {

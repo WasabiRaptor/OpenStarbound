@@ -522,8 +522,15 @@ void MainInterface::handleInteractAction(InteractAction interactAction) {
     displayScriptPane(scriptPane, sourceEntity);
 
   } else if (interactAction.type == InteractActionType::Message) {
-    m_client->mainPlayer()->receiveMessage(connectionForEntity(interactAction.entityId),
-        interactAction.data.getString("messageType"), interactAction.data.getArray("messageArgs"));
+    Maybe<Json> result;
+    for (auto p : m_interactionScriptPanes) {
+      result = p.second->receiveMessage(interactAction.data.getString("messageType"), connectionForEntity(interactAction.entityId) == m_client->worldClient()->connection(), interactAction.data.getArray("messageArgs"));
+      if (result.isValid())
+        break;
+    }
+    if (!result.isValid())
+      m_client->mainPlayer()->receiveMessage(connectionForEntity(interactAction.entityId),
+          interactAction.data.getString("messageType"), interactAction.data.getArray("messageArgs"));
   }
 }
 
@@ -531,7 +538,7 @@ void MainInterface::preUpdate(float) {
   auto player = m_client->mainPlayer();
   if (!m_client->paused())
     player->aim(cursorWorldPosition());
-  
+
   if (m_paneManager.topPane({PaneLayer::Window, PaneLayer::ModalWindow}))
     player->setBusyState(PlayerBusyState::Menu);
   else if (m_chat->hasFocus())
@@ -805,7 +812,7 @@ void MainInterface::update(float dt) {
         m_chat->addMessages({message}, false);
       } else if (action.is<SayChatAction>()) {
         SayChatAction& sayAction = action.get<SayChatAction>();
-        
+
         if (sayAction.config) {
           if (auto message = sayAction.config.opt("message"))
             m_chat->addMessages({ChatReceivedMessage(*message)}, sayAction.config.getBool("showPane", false));
@@ -1377,7 +1384,7 @@ void MainInterface::renderDebug() {
     return;
   }
   SpatialLogger::setObserved(true);
-  
+
   if (m_clientCommandProcessor->debugHudEnabled()) {
     auto assets = Root::singleton().assets();
     m_guiContext->setTextStyle(m_config->debugTextStyle);

@@ -413,6 +413,82 @@ LuaCallbacks Pane::makePaneCallbacks() {
   callbacks.registerCallback("show", [this]() { show(); });
   callbacks.registerCallback("hide", [this]() { hide(); });
 
+
+  callbacks.registerCallback("drawable", []() -> LuaCallbacks {
+    LuaCallbacks callbacks;
+    callbacks.registerCallback("boundBox", [](Drawable drawable, bool cropImages) -> RectF {
+      return drawable.boundBox(cropImages);
+    });
+    callbacks.registerCallback("boundBoxAll", [](List<Drawable> drawables, bool cropImages) -> RectF {
+      return Drawable::boundBoxAll(drawables, cropImages);
+    });
+    callbacks.registerCallback("translate", [](Drawable drawable, Vec2F translation) -> Drawable {
+      drawable.translate(translation);
+      return drawable;
+    });
+    callbacks.registerCallback("translateAll", [](List<Drawable> drawables, Vec2F translation) -> List<Drawable> {
+      Drawable::translateAll(drawables, translation);
+      return drawables;
+    });
+    callbacks.registerCallback("scale", [](Drawable drawable, Vec2F scale, Maybe<Vec2F> scaleCenter) -> Drawable {
+      drawable.scale(scale, scaleCenter.value(Vec2F()));
+      return drawable;
+    });
+    callbacks.registerCallback("scaleAll", [](List<Drawable> drawables, Vec2F scale, Maybe<Vec2F> scaleCenter) -> List<Drawable> {
+      Drawable::scaleAll(drawables, scale, scaleCenter.value(Vec2F()));
+      return drawables;
+    });
+    callbacks.registerCallback("rotate", [](Drawable drawable, float rotate, Maybe<Vec2F> rotateCenter) -> Drawable {
+      drawable.rotate(rotate, rotateCenter.value(Vec2F()));
+      return drawable;
+    });
+    callbacks.registerCallback("rotateAll", [](List<Drawable> drawables, float rotate, Maybe<Vec2F> rotateCenter) -> List<Drawable> {
+      Drawable::rotateAll(drawables, rotate, rotateCenter.value(Vec2F()));
+      return drawables;
+    });
+    callbacks.registerCallback("rotateDegrees", [](Drawable drawable, float rotate, Maybe<Vec2F> rotateCenter) -> Drawable {
+      drawable.rotate(rotate * Star::Constants::pi / 180, rotateCenter.value(Vec2F()));
+      return drawable;
+    });
+    callbacks.registerCallback("rotateDegreesAll", [](List<Drawable> drawables, float rotate, Maybe<Vec2F> rotateCenter) -> List<Drawable> {
+      Drawable::rotateAll(drawables, rotate * Star::Constants::pi / 180, rotateCenter.value(Vec2F()));
+      return drawables;
+    });
+    callbacks.registerCallback("transform", [](Drawable drawable, Mat3F transformation) -> Drawable {
+      drawable.transform(transformation);
+      return drawable;
+    });
+    callbacks.registerCallback("transformAll", [](List<Drawable> drawables, Mat3F transformation) -> List<Drawable> {
+      Drawable::transformAll(drawables, transformation);
+      return drawables;
+    });
+    callbacks.registerCallback("rebase", [](Drawable drawable, Maybe<Vec2F> newBase) -> Drawable {
+      drawable.rebase(newBase.value(Vec2F()));
+      return drawable;
+    });
+    callbacks.registerCallback("rebaseAll", [](List<Drawable> drawables, Maybe<Vec2F> newBase) -> List<Drawable> {
+      Drawable::rebaseAll(drawables, newBase.value(Vec2F()));
+      return drawables;
+    });
+    callbacks.registerCallback("addDirectives", [](Drawable drawable, String directives, bool keepCenter) -> Drawable {
+      if (drawable.isImage())
+        drawable.imagePart().addDirectives(directives, keepCenter);
+      return drawable;
+    });
+    callbacks.registerCallback("addDirectivesGroup", [](Drawable drawable, String directives, bool keepCenter) -> Drawable {
+      if (drawable.isImage())
+        drawable.imagePart().addDirectivesGroup(directives, keepCenter);
+      return drawable;
+    });
+    callbacks.registerCallback("removeDirectives", [](Drawable drawable, bool keepCenter) -> Drawable {
+      if (drawable.isImage())
+        drawable.imagePart().removeDirectives(keepCenter);
+      return drawable;
+    });
+
+    return callbacks;
+  });
+
   return callbacks;
 }
 
@@ -445,6 +521,10 @@ void Pane::renderImpl() {
     m_context->renderInterfaceText(m_subTitle, {headerPos + Vec2F(m_subTitleOffset)});
     m_context->clearTextStyle();
   }
+}
+
+Maybe<Json> Pane::receiveMessage(String const& message, bool localMessage, JsonArray const& args) {
+  return {};
 }
 
 }
