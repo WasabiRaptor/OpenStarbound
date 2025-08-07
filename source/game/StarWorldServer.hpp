@@ -180,6 +180,7 @@ public:
   float dayLength() const override;
   float timeOfDay() const override;
   LuaRootPtr luaRoot() override;
+  virtual EntityId uniqueEntityId(String const& uniqueId) override;
   RpcPromise<Vec2F> findUniqueEntity(String const& uniqueId) override;
   RpcPromise<Json> sendEntityMessage(Variant<EntityId, String> const& entity, String const& message, JsonArray const& args = {}) override;
   bool isTileProtected(Vec2I const& pos) const override;
