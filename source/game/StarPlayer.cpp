@@ -1937,7 +1937,7 @@ void Player::processStateChanges(float dt) {
   }
   if (world()->isClient()) {
     humanoid()->animate(dt, &m_humanoidDynamicTarget);
-    m_humanoidDynamicTarget.updatePosition(position() + (m_techController->parentOffset() * m_movementController->getScale()));
+    m_humanoidDynamicTarget.updatePosition(position() + (m_techController->parentOffset()));
   } else {
     humanoid()->animate(dt, {});
   }
