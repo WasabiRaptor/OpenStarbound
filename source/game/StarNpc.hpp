@@ -323,6 +323,7 @@ private:
 
   int m_hitDamageNotificationLimiter;
   int m_hitDamageNotificationLimit;
-};
 
+  HashSet<LoungeControl> m_LoungeControlsHeld;
+};
 }
