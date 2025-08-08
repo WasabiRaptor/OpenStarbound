@@ -2,7 +2,7 @@ name: Build
 permissions:
   actions: read
 
-  
+
 on:
   workflow_dispatch:
     inputs:
@@ -30,7 +30,7 @@ on:
       - 'toolchains/**'
       - 'triplets/**'
     branches:
-      - '*' 
+      - '*'
 
   pull_request:
     paths:
@@ -101,19 +101,19 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Windows-All-DevOnly
+          name: OpenStarbound-SBQ-Windows-All-DevOnly
           path: dist/*
 
       - name: Upload Client
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Windows-Client
+          name: OpenStarbound-SBQ-Windows-Client
           path: client_distribution/*
 
       - name: Upload Server
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Windows-Server
+          name: OpenStarbound-SBQ-Windows-Server
           path: server_distribution/*
 
       - name: Create Installer
@@ -127,7 +127,7 @@ jobs:
           name: OpenStarbound-Windows-Installer
           path: installer/*
           compression-level: 0
-  
+
   build_linux:
     name: Build OpenStarbound Linux x86_64
     runs-on: ubuntu-22.04
@@ -188,7 +188,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Linux-GCC
+          name: OpenStarbound-SBQ-Linux-GCC
           path: dist.tar
 
       - name: Run Tests
@@ -207,13 +207,13 @@ jobs:
       - name: Upload Client Files
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Linux-GCC-Client
+          name: OpenStarbound-SBQ-Linux-GCC-Client
           path: client.tar
 
       - name: Upload Server Files
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Linux-GCC-Server
+          name: OpenStarbound-SBQ-Linux-GCC-Server
           path: server.tar
 
   build_linux_clang:
@@ -279,7 +279,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Linux-Clang
+          name: OpenStarbound-SBQ-Linux-Clang
           path: dist.tar
 
       - name: Run Tests
@@ -298,13 +298,13 @@ jobs:
       - name: Upload Client Files
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Linux-Clang-Client
+          name: OpenStarbound-SBQ-Linux-Clang-Client
           path: client.tar
 
       - name: Upload Server Files
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-Linux-Clang-Server
+          name: OpenStarbound-SBQ-Linux-Clang-Server
           path: server.tar
 
   build-mac-intel:

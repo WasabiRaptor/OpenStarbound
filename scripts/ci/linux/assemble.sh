@@ -1,5 +1,8 @@
 #!/bin/sh -e
 
+rm Starbecue -r -f
+git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
+
 mkdir client_distribution
 mkdir client_distribution/assets
 mkdir client_distribution/assets/user
@@ -8,6 +11,8 @@ mkdir client_distribution/assets/user
 
 mkdir client_distribution/mods
 touch client_distribution/mods/mods_go_here
+
+./dist/asset_packer -c scripts/packing.config Starbecue client_distribution/mods/starbecue.pak
 
 mkdir client_distribution/linux
 cp \
@@ -31,6 +36,16 @@ mkdir server_distribution/mods
 touch server_distribution/mods/mods_go_here
 
 ./dist/asset_packer -c scripts/packing.config -s assets/opensb server_distribution/assets/opensb.pak
+./dist/asset_packer -c scripts/packing.config -s Starbecue server_distribution/mods/starbecue.pak
+
+cp Starbecue/README.md client_distribution/Starbecue_readme.md
+cp Starbecue/README.md server_distribution/Starbecue_readme.md
+
+cp Starbecue/features.md client_distribution/Starbecue_features.md
+cp Starbecue/features.md server_distribution/Starbecue_features.md
+
+cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md
+cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md
 
 mkdir server_distribution/linux
 
