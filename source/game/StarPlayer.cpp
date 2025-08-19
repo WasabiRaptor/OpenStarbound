@@ -2918,7 +2918,7 @@ void Player::refreshHumanoidParameters() {
         }
       }
     }
-    if (world()->isClient()) {
+    if (world()->isClient() && m_scriptedAnimator.initialized()) {
       m_scriptedAnimator.uninit();
       m_scriptedAnimator.removeCallbacks("animationConfig");
       m_scriptedAnimator.removeCallbacks("entity");
