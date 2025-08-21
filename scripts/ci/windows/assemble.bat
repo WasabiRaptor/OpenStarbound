@@ -15,8 +15,11 @@ if exist %server% rmdir %server% /S /Q
 xcopy %client% %server% /E /I
 
 if exist Starbecue rmdir Starbecue /S /Q
+if exist Fuck-Your-Race-Effects rmdir Fuck-Your-Race-Effects /S /Q
 
 git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
+git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
+
 xcopy Starbecue\README.md %client%\Starbecue_readme.md /E /I
 xcopy Starbecue\README.md %server%\Starbecue_readme.md /E /I
 
@@ -28,6 +31,7 @@ xcopy Starbecue\FAQ.md %server%\Starbecue_FAQ.md /E /I
 
 .\dist\asset_packer.exe -c scripts\packing.config assets\opensb %client%\assets\opensb.pak
 .\dist\asset_packer.exe -c scripts\packing.config Starbecue %client%\mods\starbecue.pak
+.\dist\asset_packer.exe -c scripts\packing.config Fuck-Your-Race-Effects %client%\mods\ShutUpAboutRaceEffects.pak
 
 for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
     xcopy "%%f" "%client%\win\" /Y
@@ -35,6 +39,7 @@ for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
 
 .\dist\asset_packer.exe -c scripts\packing.config -s assets\opensb %server%\assets\opensb.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s Starbecue %server%\mods\starbecue.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s Fuck-Your-Race-Effects %server%\mods\ShutUpAboutRaceEffects.pak
 
 for /f "delims=" %%f in (scripts\ci\windows\files_server.txt) do (
     xcopy "%%f" "%server%\win\" /Y

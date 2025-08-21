@@ -2,6 +2,8 @@
 
 rm Starbecue -r -f
 git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
+rm Fuck-Your-Race-Effects -r -f
+git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 
 mkdir client_distribution
 mkdir client_distribution/assets
@@ -13,6 +15,7 @@ mkdir client_distribution/mods
 touch client_distribution/mods/mods_go_here
 
 ./dist/asset_packer -c scripts/packing.config Starbecue client_distribution/mods/starbecue.pak
+./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects client_distribution/mods/ShutUpAboutRaceEffects.pak
 
 mkdir client_distribution/linux
 cp \
@@ -37,6 +40,7 @@ touch server_distribution/mods/mods_go_here
 
 ./dist/asset_packer -c scripts/packing.config -s assets/opensb server_distribution/assets/opensb.pak
 ./dist/asset_packer -c scripts/packing.config -s Starbecue server_distribution/mods/starbecue.pak
+./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects server_distribution/mods/ShutUpAboutRaceEffects.pak
 
 cp Starbecue/README.md client_distribution/Starbecue_readme.md
 cp Starbecue/README.md server_distribution/Starbecue_readme.md
