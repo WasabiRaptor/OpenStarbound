@@ -25,7 +25,7 @@ class Vehicle :
 public:
   Vehicle(Json baseConfig, String path, Json dynamicConfig);
 
-  String name() const;
+  String name() const override;
 
   Json baseConfig() const;
   Json dynamicConfig() const;
