@@ -1,4 +1,7 @@
-function rebuild(diskStore, e)
+-- invoked when an Object loaded from disk fails to deserialize properly
+
+-- we're catching any object error and converting them to generic objects
+function error(diskStore, e)
     sb.logError("Failed to deserialize object '%s'. %s", sb.printJson(diskStore), e)
     local parameters = diskStore.parameters
     local name = diskStore.name
