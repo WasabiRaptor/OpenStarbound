@@ -18,8 +18,8 @@
 #include "StarLuaComponents.hpp"
 #include "StarLuaAnimationComponent.hpp"
 #include "StarLuaActorMovementComponent.hpp"
-#include "StarActorEntity.hpp"
 #include "StarLoungingEntities.hpp"
+#include "StarActorEntity.hpp"
 
 namespace Star {
 
@@ -34,8 +34,8 @@ class Monster
     public virtual NametagEntity,
     public virtual ChattyEntity,
     public virtual InteractiveEntity,
-    public virtual ActorEntity,
-    public virtual LoungingEntity {
+    public virtual LoungingEntity,
+    public virtual ActorEntity {
 public:
   struct SkillInfo {
     String label;

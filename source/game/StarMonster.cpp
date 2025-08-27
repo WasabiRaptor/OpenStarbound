@@ -973,6 +973,12 @@ Vec2F Monster::questIndicatorPosition() const {
   return pos;
 }
 
+Maybe<EntityAnchorState> Monster::loungingIn() const {
+  if (is<LoungeAnchor>(m_movementController->entityAnchor()))
+    return m_movementController->anchorState();
+  return {};
+}
+
 ActorMovementController* Monster::movementController() {
   return m_movementController.get();
 }
@@ -981,10 +987,5 @@ StatusController* Monster::statusController() {
   return m_statusController.get();
 }
 
-Maybe<EntityAnchorState> Monster::loungingIn() const {
-  if (is<LoungeAnchor>(m_movementController->entityAnchor()))
-    return m_movementController->anchorState();
-  return {};
-}
 
 }
