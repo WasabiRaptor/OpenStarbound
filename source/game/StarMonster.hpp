@@ -136,9 +136,6 @@ public:
 
   Vec2F questIndicatorPosition() const override;
 
-  ActorMovementController* movementController() override;
-  StatusController* statusController() override;
-
   using Entity::setKeepAlive;
   using Entity::setUniqueId;
 

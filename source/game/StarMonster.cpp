@@ -987,5 +987,4 @@ StatusController* Monster::statusController() {
   return m_statusController.get();
 }
 
-
 }
