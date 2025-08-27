@@ -310,6 +310,12 @@ LuaMethods<EntityPtr> LuaUserDataMethods<EntityPtr>::make() {
             return actor->movementController()->collisionPoly();
         return {};
     });
+    methods.registerMethod("collisionArea", [&](EntityPtr entity) -> Maybe<float> {
+        if (auto actor = as<ActorEntity>(entity))
+            return actor->movementController()->collisionPoly().convexArea();
+        return {};
+    });
+
     methods.registerMethod("collisionBody", [&](EntityPtr entity) -> Maybe<PolyF> {
         if (auto actor = as<ActorEntity>(entity))
             return actor->movementController()->collisionBody();
