@@ -142,8 +142,8 @@ MonsterDatabase::MonsterDatabase() : m_luaRoot(make_shared<LuaRoot>()) {
 
   for (auto& path : assets->assetSources()) {
     auto metadata = assets->assetSourceMetadata(path);
-    if (auto scripts = metadata.maybe("scripts"))
-      if (auto rebuildScripts = scripts.value().optArray("monsterError"))
+    if (auto scripts = metadata.maybe("errorHandlers"))
+      if (auto rebuildScripts = scripts.value().optArray("monster"))
         m_rebuildScripts.insertAllAt(0, jsonToStringList(rebuildScripts.value()));
   }
 
@@ -238,14 +238,15 @@ MonsterPtr MonsterDatabase::diskLoadMonster(Json const& diskStore) const {
       Json returnedDiskStore = context.invokePath<Json>("error", newDiskStore, strf("{}", outputException(lastException, false)));
       if (returnedDiskStore != newDiskStore) {
         newDiskStore = returnedDiskStore;
-        try {
-          return make_shared<Monster>(diskStore);
-        } catch (std::exception const& e) {
-          lastException = e;
-        }
+        if (script != m_rebuildScripts.last())
+          try {
+            return make_shared<Monster>(newDiskStore);
+          } catch (std::exception const& e) {
+            lastException = e;
+          }
       }
     }
-    throw lastException;
+    return make_shared<Monster>(newDiskStore);
   }
 }
 

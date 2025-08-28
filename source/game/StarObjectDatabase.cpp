@@ -333,8 +333,8 @@ ObjectDatabase::ObjectDatabase() : m_luaRoot(make_shared<LuaRoot>()) {
 
   for (auto& path : assets->assetSources()) {
     auto metadata = assets->assetSourceMetadata(path);
-    if (auto scripts = metadata.maybe("scripts"))
-      if (auto rebuildScripts = scripts.value().optArray("objectError"))
+    if (auto scripts = metadata.maybe("errorHandlers"))
+      if (auto rebuildScripts = scripts.value().optArray("object"))
         m_rebuildScripts.insertAllAt(0, jsonToStringList(rebuildScripts.value()));
   }
 }
@@ -406,17 +406,21 @@ ObjectPtr ObjectDatabase::diskLoadObject(Json const& diskStore) const {
       Json returnedDiskStore = context.invokePath<Json>("error", newDiskStore, strf("{}", outputException(lastException, false)));
       if (returnedDiskStore != newDiskStore) {
         newDiskStore = returnedDiskStore;
-        try {
-          object = createObject(newDiskStore.getString("name"), newDiskStore.get("parameters"));
-          object->readStoredData(newDiskStore);
-          object->setNetStates();
-          return object;
-        } catch (std::exception const& e) {
-          lastException = e;
-        }
+        if (script != m_rebuildScripts.last())
+          try {
+            object = createObject(newDiskStore.getString("name"), newDiskStore.get("parameters"));
+            object->readStoredData(newDiskStore);
+            object->setNetStates();
+            return object;
+          } catch (std::exception const& e) {
+            lastException = e;
+          }
       }
     }
-    throw lastException;
+    object = createObject(newDiskStore.getString("name"), newDiskStore.get("parameters"));
+    object->readStoredData(newDiskStore);
+    object->setNetStates();
+    return object;
   }
 }
 

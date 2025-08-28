@@ -37,8 +37,8 @@ NpcDatabase::NpcDatabase() : m_luaRoot(make_shared<LuaRoot>()) {
   }
   for (auto& path : assets->assetSources()) {
     auto metadata = assets->assetSourceMetadata(path);
-    if (auto scripts = metadata.maybe("scripts"))
-      if (auto rebuildScripts = scripts.value().optArray("npcError"))
+    if (auto scripts = metadata.maybe("errorHandlers"))
+      if (auto rebuildScripts = scripts.value().optArray("npc"))
         m_rebuildScripts.insertAllAt(0,jsonToStringList(rebuildScripts.value()));
   }
 
@@ -383,15 +383,17 @@ NpcPtr NpcDatabase::diskLoadNpc(Json const& diskStore) const {
       Json returnedDiskStore = context.invokePath<Json>("error", newDiskStore, strf("{}", outputException(lastException, false)));
       if (returnedDiskStore != newDiskStore) {
         newDiskStore = returnedDiskStore;
-        try {
-          NpcVariant npcVariant = readNpcVariantFromJson(newDiskStore.get("npcVariant"));
-          return make_shared<Npc>(npcVariant, newDiskStore);
-        } catch (std::exception const& e) {
-          lastException = e;
-        }
+        if (script != m_rebuildScripts.last())
+          try {
+            NpcVariant npcVariant = readNpcVariantFromJson(newDiskStore.get("npcVariant"));
+            return make_shared<Npc>(npcVariant, newDiskStore);
+          } catch (std::exception const& e) {
+            lastException = e;
+          }
       }
     }
-    throw lastException;
+    NpcVariant npcVariant = readNpcVariantFromJson(newDiskStore.get("npcVariant"));
+    return make_shared<Npc>(npcVariant, newDiskStore);
   }
 }
 

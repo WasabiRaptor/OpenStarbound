@@ -28,8 +28,8 @@ VehicleDatabase::VehicleDatabase() : m_luaRoot(make_shared<LuaRoot>()) {
 
   for (auto& path : assets->assetSources()) {
     auto metadata = assets->assetSourceMetadata(path);
-    if (auto scripts = metadata.maybe("scripts"))
-      if (auto rebuildScripts = scripts.value().optArray("vehicleError"))
+    if (auto scripts = metadata.maybe("errorHandlers"))
+      if (auto rebuildScripts = scripts.value().optArray("vehicle"))
         m_rebuildScripts.insertAllAt(0, jsonToStringList(rebuildScripts.value()));
   }
 }
@@ -74,23 +74,32 @@ VehiclePtr VehicleDatabase::diskLoad(Json const& diskStore) const {
   try {
     vehicle = create(diskStore.getString("name"), diskStore.get("dynamicConfig"));
     vehicle->diskLoad(diskStore.get("state"));
+    return vehicle;
   } catch (std::exception const& e) {
-    Json newDiskStore;
+    auto lastException = e;
+    Json newDiskStore = diskStore;
     for (auto script : m_rebuildScripts) {
       RecursiveMutexLocker locker(m_luaMutex);
       auto context = m_luaRoot->createContext(script);
       context.setCallbacks("root", LuaBindings::makeRootCallbacks());
       context.setCallbacks("sb", LuaBindings::makeUtilityCallbacks());
-      newDiskStore = context.invokePath<Json>("error", diskStore, strf("{}", outputException(e, false)));
-      if (!newDiskStore.isNull())
-        break;
+      Json returnedDiskStore = context.invokePath<Json>("error", newDiskStore, strf("{}", outputException(lastException, false)));
+      if (returnedDiskStore != newDiskStore) {
+        newDiskStore = returnedDiskStore;
+        if (script != m_rebuildScripts.last())
+          try {
+            vehicle = create(diskStore.getString("name"), diskStore.get("dynamicConfig"));
+            vehicle->diskLoad(diskStore.get("state"));
+            return vehicle;
+          } catch (std::exception const& e) {
+            lastException = e;
+          }
+      }
     }
-    if (newDiskStore.isNull())
-      throw e;
-    vehicle = create(newDiskStore.getString("name"), newDiskStore.get("dynamicConfig"));
-    vehicle->diskLoad(newDiskStore.get("state"));
+    vehicle = create(diskStore.getString("name"), diskStore.get("dynamicConfig"));
+    vehicle->diskLoad(diskStore.get("state"));
+    return vehicle;
   }
-  return vehicle;
 }
 
 }
