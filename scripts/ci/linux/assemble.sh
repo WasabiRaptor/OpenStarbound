@@ -4,6 +4,8 @@ rm Starbecue -r -f
 git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
 rm Fuck-Your-Race-Effects -r -f
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
+rm sb_pokemon -r -f
+git clone https://github.com/WasabiRaptor/sb_pokemon
 
 mkdir client_distribution
 mkdir client_distribution/assets
@@ -16,6 +18,7 @@ touch client_distribution/mods/mods_go_here
 
 ./dist/asset_packer -c scripts/packing.config Starbecue client_distribution/mods/starbecue.pak
 ./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects client_distribution/mods/ShutUpAboutRaceEffects.pak
+./dist/asset_packer -c scripts/packing.config sb_pokemon client_distribution/mods/Raptors_Pokemon.pak
 
 mkdir client_distribution/linux
 cp \
@@ -40,7 +43,8 @@ touch server_distribution/mods/mods_go_here
 
 ./dist/asset_packer -c scripts/packing.config -s assets/opensb server_distribution/assets/opensb.pak
 ./dist/asset_packer -c scripts/packing.config -s Starbecue server_distribution/mods/starbecue.pak
-./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects server_distribution/mods/ShutUpAboutRaceEffects.pak
+./dist/asset_packer -c scripts/packing.config -s Fuck-Your-Race-Effects server_distribution/mods/ShutUpAboutRaceEffects.pak
+./dist/asset_packer -c scripts/packing.config -s sb_pokemon server_distribution/mods/Raptors_Pokemon.pak
 
 cp Starbecue/README.md client_distribution/Starbecue_readme.md
 cp Starbecue/README.md server_distribution/Starbecue_readme.md
@@ -50,6 +54,9 @@ cp Starbecue/features.md server_distribution/Starbecue_features.md
 
 cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md
 cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md
+
+cp README.md client_distribution/OpenSB_readme.md
+cp README.md server_distribution/OpenSB_readme.md
 
 mkdir server_distribution/linux
 
