@@ -112,6 +112,7 @@ SET (star_game_HEADERS
     StarQuests.hpp
     StarQuestTemplateDatabase.hpp
     StarRadioMessageDatabase.hpp
+    StarRebuilder.hpp
     StarRoot.hpp
     StarRootLoader.hpp
     StarServerClientContext.hpp
@@ -377,6 +378,7 @@ SET (star_game_SOURCES
     StarQuests.cpp
     StarQuestTemplateDatabase.cpp
     StarRadioMessageDatabase.cpp
+    StarRebuilder.cpp
     StarRoot.cpp
     StarRootLoader.cpp
     StarServerClientContext.cpp
@@ -485,6 +487,7 @@ SET (star_game_SOURCES
     scripting/StarInputLuaBindings.cpp
     scripting/StarItemLuaBindings.cpp
     scripting/StarLuaComponents.cpp
+    scripting/StarLuaEntityUserdata.cpp
     scripting/StarLuaGameConverters.cpp
     scripting/StarLuaRoot.cpp
     scripting/StarMovementControllerLuaBindings.cpp

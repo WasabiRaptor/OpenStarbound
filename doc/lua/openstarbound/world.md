@@ -1,6 +1,6 @@
 # World
 
-The world table now contains extra bindings.
+The `world` table now contains extra bindings.
 
 ---
 
@@ -38,6 +38,12 @@ Returns whether any players are in the world.
 
 ---
 
+#### `void` world.wire(`Vec2I` outputPosition, `int` outputIndex, `Vec2I` inputPosition, `int` inputIndex)
+
+Attempts to create a wire connection in the specified input and output positions. The node indexes must be correct for the input/output positions.
+
+---
+
 The following additional world bindings are available only for scripts running on the server.
 
 ---
@@ -48,7 +54,7 @@ Sets the amount of time to persist a ephemeral world when it is inactive.
 
 ---
 
-#### `string` world.id()
+#### `String` world.id()
 
 Returns a `String` representation of the world's id.
 
@@ -75,5 +81,3 @@ Attempts to replace existing materials with the specified material in the specif
 #### `bool` world.replaceMaterialArea(`Vec2F` center, `float` radius, `String` layerName, `String` materialName, [`int` hueShift], [`bool` enableDrops])
 
 Identical to world.replaceMaterials but applies to tiles in a circular radius around the specified center point.
-
----

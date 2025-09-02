@@ -1,6 +1,6 @@
 # animator
 
-The *animator* table contains functions that relate to an attached networked animator. Networked animators are found in:
+The `animator` table contains functions that relate to an attached networked animator. Networked animators are found in:
 
 * tech
 * monsters
@@ -14,6 +14,19 @@ In OSB, If a player/npc's humanoid config contains an `animation`, then they wil
 * Players get access to the animator callbacks in their generic script contexts.
 
 Animator callbacks will be added and removed from player/npc script contexts depending on whether the active humanoid config uses an animation or not.
+
+---
+
+#### `bool` animator.flipped()
+True if the animator is flipped.
+
+#### `float` animator.flippedRelativeCenterLine()
+Returns the center line the animator was flipped at.
+
+---
+
+#### `float` animator.animationRate()
+Returns the animation rate.
 
 ---
 

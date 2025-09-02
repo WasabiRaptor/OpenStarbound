@@ -377,7 +377,10 @@ namespace LuaBindings {
       });
       callbacks.registerCallback("setTemplate", [clientWorld](Json worldTemplate) {
         clientWorld->setTemplate(worldTemplate);
-      });
+      }); 
+      callbacks.registerCallback("wire", [clientWorld](Vec2I outputPosition, int outputIndex, Vec2I inputPosition, int inputIndex) {
+        clientWorld->wire(outputPosition, outputIndex, inputPosition, inputIndex);
+      }); 
     }
 
     if (auto serverWorld = as<WorldServer>(world)) {
@@ -499,6 +502,11 @@ namespace LuaBindings {
           else
             return {};
         });
+    
+    callbacks.registerCallbackWithSignature<EntityPtr, EntityId>("entity", [world](EntityId entityId) -> EntityPtr {
+      return world->entity(entityId);
+    });
+    
     callbacks.registerCallbackWithSignature<bool, int>("entityExists", bind(WorldEntityCallbacks::entityExists, world, _1));
     callbacks.registerCallbackWithSignature<bool, int, int>("entityCanDamage", bind(WorldEntityCallbacks::entityCanDamage, world, _1, _2));
     callbacks.registerCallbackWithSignature<Json, EntityId>("entityDamageTeam", bind(WorldEntityCallbacks::entityDamageTeam, world, _1));
@@ -1443,22 +1451,8 @@ namespace LuaBindings {
   }
 
   Maybe<String> WorldEntityCallbacks::entityName(World* world, EntityId entityId) {
-    auto entity = world->entity(entityId);
-
-    if (auto portraitEntity = as<PortraitEntity>(entity)) {
-      return portraitEntity->name();
-    } else if (auto objectEntity = as<Object>(entity)) {
-      return objectEntity->name();
-    } else if (auto itemDropEntity = as<ItemDrop>(entity)) {
-      if (itemDropEntity->item())
-        return itemDropEntity->item()->name();
-    } else if (auto vehicleEntity = as<Vehicle>(entity)) {
-      return vehicleEntity->name();
-    } else if (auto stagehandEntity = as<Stagehand>(entity)) {
-      return stagehandEntity->typeName();
-    } else if (auto projectileEntity = as<Projectile>(entity)) {
-      return projectileEntity->typeName();
-    }
+    if (auto entity = world->entity(entityId))
+      return entity->name();
 
     return {};
   }
