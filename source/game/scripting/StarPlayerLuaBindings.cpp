@@ -644,6 +644,7 @@ LuaCallbacks LuaBindings::makePlayerCallbacks(Player* player) {
   callbacks.registerCallback("lounge", [player](EntityId entityId, Maybe<size_t> anchorIndex) {
       return player->lounge(entityId, anchorIndex.value(0));
     });
+  callbacks.copyCallback("lounge", "setLounging");
   callbacks.registerCallback("isLounging", [player]() { return (bool)player->loungingIn(); });
   callbacks.registerCallback("loungingIn", [player]() -> Maybe<EntityId> {
       if (auto anchorState = player->loungingIn())
@@ -651,6 +652,7 @@ LuaCallbacks LuaBindings::makePlayerCallbacks(Player* player) {
       return {};
     });
   callbacks.registerCallback("stopLounging", [player]() { player->stopLounging(); });
+  callbacks.copyCallback("stopLounging", "resetLounging");
 
   callbacks.registerCallback("playTime", [player]() { return player->log()->playTime(); });
 
