@@ -500,7 +500,8 @@ String NetworkedAnimator::applyPartTags(String const& partName, String apply) co
     frameStr = static_cast<String>(toString(stateFrame + 1));
     frameIndexStr = static_cast<String>(toString(stateFrame));
   }
-  if (version() > 0)
+  if (version() > 0){
+    animationTags.set("relativePath", m_relativePath.get());
     m_animatedParts.forEachActiveState([&](String const& stateTypeName, AnimatedPartSet::ActiveStateInformation const& activeState) {
       unsigned stateFrame = activeState.frame;
       Maybe<unsigned> frame;
@@ -521,6 +522,7 @@ String NetworkedAnimator::applyPartTags(String const& partName, String apply) co
           animationTags.set(tag.first, tag.second.toString());
       }
     });
+  }
 
   auto applied = apply.maybeLookupTagsView([&](StringView tag) -> StringView {
     if (tag == "frame") {
