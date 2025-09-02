@@ -797,7 +797,8 @@ List<pair<Drawable, float>> NetworkedAnimator::drawablesWithZLevel(Vec2F const& 
     }
   }
   HashMap<String, String> animationTags = m_localTags;
-  if (version() > 0)
+  if (version() > 0) {
+    animationTags.set("relativePath", m_relativePath);
     m_animatedParts.forEachActiveState([&](String const& stateTypeName, AnimatedPartSet::ActiveStateInformation const& activeState) {
       unsigned stateFrame = activeState.frame;
       Maybe<unsigned> frame;
@@ -818,6 +819,7 @@ List<pair<Drawable, float>> NetworkedAnimator::drawablesWithZLevel(Vec2F const& 
           animationTags.set(tag.first, tag.second.toString());
       }
     });
+  }
 
   List<tuple<AnimatedPartSet::ActivePartInformation const*, String const*, float>> parts;
   parts.reserve(partCount);
