@@ -500,8 +500,8 @@ String NetworkedAnimator::applyPartTags(String const& partName, String apply) co
     frameStr = static_cast<String>(toString(stateFrame + 1));
     frameIndexStr = static_cast<String>(toString(stateFrame));
   }
-  if (version() > 0){
-    animationTags.set("relativePath", m_relativePath.get());
+  if (version() > 0) {
+    animationTags.set("relativePath", m_relativePath);
     m_animatedParts.forEachActiveState([&](String const& stateTypeName, AnimatedPartSet::ActiveStateInformation const& activeState) {
       unsigned stateFrame = activeState.frame;
       Maybe<unsigned> frame;
