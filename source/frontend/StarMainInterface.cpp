@@ -523,8 +523,8 @@ void MainInterface::handleInteractAction(InteractAction interactAction) {
 
   } else if (interactAction.type == InteractActionType::Message) {
     Maybe<Json> result;
-    for (auto p : m_interactionScriptPanes) {
-      result = p.second->receiveMessage(interactAction.data.getString("messageType"), connectionForEntity(interactAction.entityId) == m_client->worldClient()->connection(), interactAction.data.getArray("messageArgs"));
+    for (auto p : paneManager()->getAllPanes()){
+      result = p->receiveMessage(interactAction.data.getString("messageType"), connectionForEntity(interactAction.entityId) == m_client->worldClient()->connection(), interactAction.data.getArray("messageArgs"));
       if (result.isValid())
         break;
     }
