@@ -24,13 +24,13 @@ LuaCallbacks LuaBindings::makeInterfaceCallbacks(MainInterface* mainInterface) {
     return {};
   });
 
-  
+
   callbacks.registerCallback("bindRegisteredPane", [mainInterface](String const& registeredPaneName) -> Maybe<LuaCallbacks> {
     if (auto pane = mainInterface->paneManager()->maybeRegisteredPane(MainInterfacePanesNames.getLeft(registeredPaneName)))
       return pane->makePaneCallbacks();
     return {};
   });
-  
+
   callbacks.registerCallback("displayRegisteredPane", [mainInterface](String const& registeredPaneName) {
     auto pane = MainInterfacePanesNames.getLeft(registeredPaneName);
     auto paneManager = mainInterface->paneManager();
@@ -46,6 +46,13 @@ LuaCallbacks LuaBindings::makeInterfaceCallbacks(MainInterface* mainInterface) {
     mainInterface->queueMessage(message, cooldown, springState.value(0));
   });
 
+  callbacks.registerCallback("sendMessage", [mainInterface](String const& message, LuaVariadic<Json> args) {
+    for (auto p : mainInterface->paneManager()->getAllPanes()) {
+      if (auto resp = p->receiveMessage(message, true, args))
+        return RpcPromise<Json>::createFulfilled(resp.take());
+    }
+    return RpcPromise<Json>::createFailed("Message not handled by interface");
+  });
 
   return callbacks;
 }
