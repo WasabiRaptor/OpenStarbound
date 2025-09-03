@@ -1115,8 +1115,12 @@ bool Npc::isInteractive() const {
 }
 
 InteractAction Npc::interact(InteractRequest const& request) {
-  auto result = m_scriptComponent.invoke<Json>("interact",
-      JsonObject{{"sourceId", request.sourceId}, {"sourcePosition", jsonFromVec2F(request.sourcePosition)}}).value();
+  auto result = m_scriptComponent.invoke<Json>("interact", JsonObject{
+    {"source", jsonFromVec2F(world()->geometry().diff(request.sourcePosition, position()))},
+    {"sourceId", request.sourceId},
+    {"sourcePosition", jsonFromVec2F(request.sourcePosition)},
+    {"interactPosition", jsonFromVec2F(request.interactPosition)}
+  }).value();
 
   if (result.isNull())
     return {};
