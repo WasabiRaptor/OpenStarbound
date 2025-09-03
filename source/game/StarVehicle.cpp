@@ -411,10 +411,12 @@ bool Vehicle::isInteractive() const {
 
 InteractAction Vehicle::interact(InteractRequest const& request) {
   auto result = m_scriptComponent.invoke<Json>("onInteraction", JsonObject{
-      {"sourceId", request.sourceId},
-      {"sourcePosition", jsonFromVec2F(request.sourcePosition)},
-      {"interactPosition", jsonFromVec2F(request.interactPosition)}
-    }).value();
+    {"source", jsonFromVec2F(world()->geometry().diff(request.sourcePosition, position()))},
+    {"sourceId", request.sourceId},
+    {"sourcePosition", jsonFromVec2F(request.sourcePosition)},
+    {"interactPosition", jsonFromVec2F(request.interactPosition)}
+  }).value();
+
 
   if (result.isType(Json::Type::String))
     return InteractAction(result.toString(), entityId(), Json());

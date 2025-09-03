@@ -1199,9 +1199,13 @@ bool Object::isInteractive() const {
 }
 
 InteractAction Object::interact(InteractRequest const& request) {
-  Vec2F diff = world()->geometry().diff(request.sourcePosition, position());
-  auto result = m_scriptComponent.invoke<Json>(
-      "onInteraction", JsonObject{{"source", JsonArray{diff[0], diff[1]}}, {"sourceId", request.sourceId}});
+  auto result = m_scriptComponent.invoke<Json>("onInteraction", JsonObject{
+    {"source", jsonFromVec2F(world()->geometry().diff(request.sourcePosition, position()))},
+    {"sourceId", request.sourceId},
+    {"sourcePosition", jsonFromVec2F(request.sourcePosition)},
+    {"interactPosition", jsonFromVec2F(request.interactPosition)}
+  });
+
 
   if (result) {
     if (result->isNull())
