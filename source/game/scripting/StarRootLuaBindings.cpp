@@ -265,7 +265,7 @@ LuaCallbacks LuaBindings::makeRootCallbacks() {
     });
 
   callbacks.registerCallback("speciesConfig", [root](String const& species) -> Json {
-    if (root->speciesDatabase()->allSpecies().contains(species))
+    if (root->speciesDatabase()->allSpecies().contains(species.toLower()))
       return root->speciesDatabase()->species(species)->config();
     return Json();
   });
