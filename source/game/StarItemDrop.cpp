@@ -403,6 +403,7 @@ ItemDrop::ItemDrop() {
     m_defaultBoundBox = parameters.collisionPoly->boundBox();
   else
     m_defaultBoundBox = RectF{-0.499, -0.499, 0.499, 0.499};
+  m_boundBox = m_defaultBoundBox;
 
   m_movementController.applyParameters(parameters);
 
@@ -430,8 +431,8 @@ ItemDrop::ItemDrop() {
 void ItemDrop::updateCollisionPoly() {
   /* // currently disabled due to causing items to get stuck
   if (!as<MaterialItem>(m_item.get())) {
-    auto boundBox = Drawable::boundBoxAll(m_item->dropDrawables(), true);
-    boundBox.rangeSetIfEmpty(m_defaultBoundBox);
+    m_boundBox = Drawable::boundBoxAll(m_item->dropDrawables(), true);
+    m_boundBox.rangeSetIfEmpty(m_defaultBoundBox);
     MovementParameters parameters;
     parameters.collisionPoly = PolyF(collisionArea());
     m_movementController.applyParameters(parameters);
