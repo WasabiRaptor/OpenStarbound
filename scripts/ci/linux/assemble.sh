@@ -6,6 +6,8 @@ rm Fuck-Your-Race-Effects -r -f
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 rm sb_pokemon -r -f
 git clone https://github.com/WasabiRaptor/sb_pokemon
+rm SB_MetroidDoors -r -f
+git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 
 mkdir client_distribution
 mkdir client_distribution/assets
@@ -19,6 +21,7 @@ touch client_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config Starbecue client_distribution/mods/starbecue.pak
 ./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects client_distribution/mods/ShutUpAboutRaceEffects.pak
 ./dist/asset_packer -c scripts/packing.config sb_pokemon client_distribution/mods/Raptors_Pokemon.pak
+./dist/asset_packer -c scripts/packing.config SB_MetroidDoors client_distribution/mods/Raptors_MetroidDoors.pak
 
 mkdir client_distribution/linux
 cp \
@@ -45,6 +48,7 @@ touch server_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config -s Starbecue server_distribution/mods/starbecue.pak
 ./dist/asset_packer -c scripts/packing.config -s Fuck-Your-Race-Effects server_distribution/mods/ShutUpAboutRaceEffects.pak
 ./dist/asset_packer -c scripts/packing.config -s sb_pokemon server_distribution/mods/Raptors_Pokemon.pak
+./dist/asset_packer -c scripts/packing.config -s SB_MetroidDoors server_distribution/mods/Raptors_MetroidDoors.pak
 
 cp Starbecue/README.md client_distribution/Starbecue_readme.md
 cp Starbecue/README.md server_distribution/Starbecue_readme.md
