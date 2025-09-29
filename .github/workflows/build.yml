@@ -115,33 +115,33 @@ jobs:
         with:
           name: OpenStarbound-SBQ-Windows-Server
           path: server_distribution/*
-          
+
       - name: Install Inno Setup
         run: |
           echo "Checking pre-installation..."
-          
+
           set "ISCC_PATH=%programfiles(x86)%\Inno Setup 6\ISCC.exe"
-          
+
           if exist "%ISCC_PATH%" (
             echo ::warning::Inno Setup is already installed
             exit /b 0
           )
-          
+
           echo "Downloading Inno Setup..."
-  
+
           set "_url_=https://jrsoftware.org/download.php/is.exe?site=1"
           set "_file_=innosetup.exe"
-  
+
           curl -L -o "%tmp%\%_file_%" "%_url_%"
-          
+
           echo "Installing Inno Setup..."
           "%tmp%\%_file_%" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
-          
+
           if not exist "%ISCC_PATH%" (
             echo "::error::Inno Setup installation failed"
             exit 1
           )
-          
+
           echo ::warning::Inno Setup installed successfully!
         shell: cmd
 
@@ -396,7 +396,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-macOS-Intel
+          name: OpenStarbound-SBQ-macOS-Intel
           path: dist/*
 
       - name: Assemble Files
@@ -406,7 +406,7 @@ jobs:
       - name: Upload Client Files
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-macOS-Intel-Client
+          name: OpenStarbound-SBQ-macOS-Intel-Client
           path: client.tar
 
   build-mac-arm:
@@ -469,7 +469,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-macOS-Silicon
+          name: OpenStarbound-SBQ-macOS-Silicon
           path: dist/*
 
       - name: Assemble Files
@@ -479,5 +479,5 @@ jobs:
       - name: Upload Client Files
         uses: actions/upload-artifact@v4
         with:
-          name: OpenStarbound-macOS-Silicon-Client
+          name: OpenStarbound-SBQ-macOS-Silicon-Client
           path: client.tar
