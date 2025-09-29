@@ -533,6 +533,27 @@ LuaMethods<EntityPtr> LuaUserDataMethods<EntityPtr>::make() {
         }
     });
 
+    methods.registerMethod("humanoidIdentity",
+    [&](EntityPtr const& entity) -> Maybe<Json> {
+        if (auto player = as<Player>(entity)) {
+            return player->identity().toJson();
+        } else if (auto npc = as<Npc>(entity)) {
+            return npc->identity().toJson();
+        } else {
+            return {};
+        }
+    });
+    methods.registerMethod("humanoidConfig",
+    [&](EntityPtr const& entity, bool withOverrides = false) -> Maybe<Json> {
+        if (auto player = as<Player>(entity)) {
+            return player->humanoid()->humanoidConfig(withOverrides);
+        } else if (auto npc = as<Npc>(entity)) {
+            return npc->humanoid()->humanoidConfig(withOverrides);
+        } else {
+            return {};
+        }
+    });
+
     // player methods
     methods.registerMethod("currency",
     [&](EntityPtr const& entity, String const& currencyType) -> Maybe<uint64_t> {

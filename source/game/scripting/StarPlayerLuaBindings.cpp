@@ -281,6 +281,13 @@ LuaCallbacks LuaBindings::makePlayerCallbacks(Player* player) {
   callbacks.registerCallback("interact", [player](String const& type, Json const& configData, Maybe<EntityId> const& sourceEntityId) {
       player->interact(InteractAction(type, sourceEntityId.value(NullEntityId), configData));
     });
+  callbacks.registerCallback("interactWithEntity", [player](EntityId const& entityId) {
+    auto entity = player->world()->entity(entityId);
+    if (auto ie = as<InteractiveEntity>(entity)) {
+      if (ie->isInteractive())
+        player->interactWithEntity(ie);
+    }
+  });
 
   callbacks.registerCallback("shipUpgrades", [player]() { return player->shipUpgrades().toJson(); });
   callbacks.registerCallback("upgradeShip", [player](Json const& upgrades) { player->applyShipUpgrades(upgrades); });
