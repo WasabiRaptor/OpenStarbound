@@ -1,11 +1,11 @@
 #!/bin/sh -e
-rm Starbecue -r -f
+rm -rf Starbecue
 git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
-rm Fuck-Your-Race-Effects -r -f
+rm -rf Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
-rm sb_pokemon -r -f
+rm -rf sb_pokemon
 git clone https://github.com/WasabiRaptor/sb_pokemon
-rm SB_MetroidDoors -r -f
+rm -rf SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 
 mkdir client_distribution
