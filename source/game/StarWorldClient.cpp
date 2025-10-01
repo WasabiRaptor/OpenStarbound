@@ -147,6 +147,10 @@ void WorldClient::setRespawnInWorld(bool respawnInWorld) {
   m_respawnInWorld = respawnInWorld;
 }
 
+int64_t WorldClient::latency() const {
+  return m_latency;
+}
+
 void WorldClient::resendEntity(EntityId entityId) {
   auto entity = m_entityMap->entity(entityId);
   if (!entity || !entity->isMaster() || !m_masterEntitiesNetVersion.contains(entity->entityId()))
@@ -2196,7 +2200,7 @@ void WorldClient::disconnectAllWires(Vec2I wireEntityPosition, WireNode const& n
   m_outgoingPackets.append(make_shared<DisconnectAllWiresPacket>(wireEntityPosition, node));
 }
 
-void WorldClient::wire(Vec2I const& outputPosition, int const& outputIndex, Vec2I const& inputPosition, int const& inputIndex) {
+void WorldClient::wire(Vec2I const& outputPosition, size_t outputIndex, Vec2I const& inputPosition, size_t inputIndex) {
   WireConnection output = {outputPosition, outputIndex};
   WireConnection input = {inputPosition, inputIndex};
   connectWire(output, input);
