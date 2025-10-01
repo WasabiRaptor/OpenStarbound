@@ -527,4 +527,7 @@ Maybe<Json> Pane::receiveMessage(String const& message, bool localMessage, JsonA
   return {};
 }
 
+bool Pane::dismissable() const {
+  return true;
+}
 }
