@@ -32,7 +32,7 @@ ScriptPane::ScriptPane(UniverseClientPtr client, Json config, EntityId sourceEnt
   m_script.addCallbacks("status", LuaBindings::makeStatusControllerCallbacks(m_client->mainPlayer()->statusController()));
   m_script.addCallbacks("celestial", LuaBindings::makeCelestialCallbacks(m_client.get()));
 
-  m_sourceRadius = config.optFloat("sourceRadius");
+  m_sourceRadius = BaseScriptPane::config().optFloat("sourceRadius");
 }
 
 void ScriptPane::displayed() {
