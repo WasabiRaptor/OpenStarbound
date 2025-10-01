@@ -233,8 +233,10 @@ bool PaneManager::sendInputEvent(InputEvent const& event) {
   // really needs to (like the keybindings window).
   if (event.is<KeyDownEvent>() && m_context->actions(event).contains(InterfaceAction::GuiClose)) {
     if (auto top = topPane({PaneLayer::ModalWindow, PaneLayer::Window})) {
-      dismiss(top);
-      return true;
+      if (top->dismissable()) {
+        dismiss(top);
+        return true;
+      }
     }
   }
 
@@ -297,7 +299,7 @@ void PaneManager::update(float dt) {
   bool updateTooltip = m_tooltipShowTimer.tick(dt) || (m_activeTooltip && (
     vmag(m_tooltipInitialPosition - m_tooltipLastMousePos) > m_tooltipMouseoverRadius
     || m_tooltipParentPane != newTooltipParentPane
-    || !m_tooltipParentPane->inWindow(m_tooltipLastMousePos))); 
+    || !m_tooltipParentPane->inWindow(m_tooltipLastMousePos)));
 
   if (updateTooltip) {
     if (m_activeTooltip) {
