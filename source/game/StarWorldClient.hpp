@@ -157,7 +157,7 @@ public:
   List<AudioInstancePtr> pullPendingAudio();
   List<AudioInstancePtr> pullPendingMusic();
 
-  bool playerCanReachEntity(EntityId entityId, bool preferInteractive = true) const;
+  bool playerCanReachEntity(EntityId entityId, bool preferInteractive = true, Maybe<float> radius = {}) const;
 
   void disconnectAllWires(Vec2I wireEntityPosition, WireNode const& node);
   void wire(Vec2I const& outputPosition, size_t outputIndex, Vec2I const& inputPosition, size_t inputIndex);

@@ -2194,8 +2194,8 @@ void WorldClient::setProperty(String const& propertyName, Json const& property) 
   m_outgoingPackets.append(make_shared<UpdateWorldPropertiesPacket>(JsonObject{{propertyName, property}}));
 }
 
-bool WorldClient::playerCanReachEntity(EntityId entityId, bool preferInteractive) const {
-  return m_mainPlayer->isAdmin() || canReachEntity(m_mainPlayer->position(), m_mainPlayer->interactRadius(), entityId, preferInteractive);
+bool WorldClient::playerCanReachEntity(EntityId entityId, bool preferInteractive, Maybe<float> radius) const {
+  return m_mainPlayer->isAdmin() || canReachEntity(m_mainPlayer->position(), radius.value(m_mainPlayer->interactRadius()), entityId, preferInteractive);
 }
 
 void WorldClient::disconnectAllWires(Vec2I wireEntityPosition, WireNode const& node) {

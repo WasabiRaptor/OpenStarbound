@@ -118,10 +118,12 @@ TeleportDialog::TeleportDialog(UniverseClientPtr client,
   }
 
   fetchChild<ButtonWidget>("btnTeleport")->setEnabled(destList->selectedItem() != NPos);
+
+  m_sourceRadius = config.optFloat("sourceRadius");
 }
 
 void TeleportDialog::tick(float) {
-  if (!m_client->worldClient()->playerCanReachEntity(m_sourceEntityId))
+  if (!(m_sourceRadius.isValid() && m_sourceRadius.value() == -1.0f) && m_sourceEntityId != NullEntityId && !m_client->worldClient()->playerCanReachEntity(m_sourceEntityId, true, m_sourceRadius))
     dismiss();
 }
 

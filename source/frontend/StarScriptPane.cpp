@@ -31,6 +31,8 @@ ScriptPane::ScriptPane(UniverseClientPtr client, Json config, EntityId sourceEnt
   m_script.addCallbacks("player", LuaBindings::makePlayerCallbacks(m_client->mainPlayer().get()));
   m_script.addCallbacks("status", LuaBindings::makeStatusControllerCallbacks(m_client->mainPlayer()->statusController()));
   m_script.addCallbacks("celestial", LuaBindings::makeCelestialCallbacks(m_client.get()));
+
+  m_sourceRadius = config.optFloat("sourceRadius");
 }
 
 void ScriptPane::displayed() {
@@ -48,7 +50,7 @@ void ScriptPane::dismissed() {
 }
 
 void ScriptPane::tick(float dt) {
-  if (m_sourceEntityId != NullEntityId && !m_client->worldClient()->playerCanReachEntity(m_sourceEntityId))
+  if (!(m_sourceRadius.isValid() && m_sourceRadius.value() == -1.0f) && m_sourceEntityId != NullEntityId && !m_client->worldClient()->playerCanReachEntity(m_sourceEntityId, true, m_sourceRadius))
     dismiss();
 
   BaseScriptPane::tick(dt);

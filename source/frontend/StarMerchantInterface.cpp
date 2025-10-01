@@ -108,6 +108,9 @@ MerchantPane::MerchantPane(
   updateSelection();
 
   updateSellTotal();
+
+  m_sourceRadius = paneLayout.optFloat("sourceRadius");
+
 }
 
 void MerchantPane::displayed() {
@@ -144,7 +147,7 @@ PanePtr MerchantPane::createTooltip(Vec2I const& screenPosition) {
 void MerchantPane::update(float dt) {
   Pane::update(dt);
 
-  if (m_sourceEntityId != NullEntityId && !m_worldClient->playerCanReachEntity(m_sourceEntityId))
+  if (!(m_sourceRadius.isValid() && m_sourceRadius.value() == -1.0f) && m_sourceEntityId != NullEntityId && !m_worldClient->playerCanReachEntity(m_sourceEntityId, true, m_sourceRadius))
     dismiss();
 
   if (m_refreshTimer.wrapTick()) {
