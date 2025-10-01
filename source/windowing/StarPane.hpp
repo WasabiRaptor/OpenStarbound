@@ -96,6 +96,8 @@ public:
   virtual LuaCallbacks makePaneCallbacks();
   virtual Maybe<Json> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {});
 
+  virtual bool dismissable() const;
+
 protected:
   virtual GuiReaderPtr reader();
   virtual void renderImpl();

@@ -29,6 +29,7 @@ public:
   Json const& rawConfig() const;
 
   bool interactive() const override;
+  bool dismissable() const override;
 
   PanePtr createTooltip(Vec2I const& screenPosition) override;
   Maybe<String> cursorOverride(Vec2I const& screenPosition) override;

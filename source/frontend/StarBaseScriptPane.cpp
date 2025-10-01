@@ -98,6 +98,10 @@ Json const& BaseScriptPane::rawConfig() const { return m_rawConfig; }
 
 bool BaseScriptPane::interactive() const { return m_interactive; }
 
+bool BaseScriptPane::dismissable() const {
+  return m_config.getBool("dismissable", true);
+}
+
 PanePtr BaseScriptPane::createTooltip(Vec2I const& screenPosition) {
   auto result = m_script.invoke<Json>("createTooltip", screenPosition);
   if (result && !result.value().isNull()) {
