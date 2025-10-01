@@ -50,6 +50,7 @@ private:
 
   WorldClientPtr m_worldClient;
   PlayerPtr m_player;
+  Maybe<float> m_sourceRadius;
   EntityId m_sourceEntityId;
   Json m_settings;
 

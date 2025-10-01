@@ -359,9 +359,9 @@ TileModificationList WorldClient::validTileModifications(TileModificationList co
 TileModificationList WorldClient::applyTileModifications(TileModificationList const& modificationList, bool allowEntityOverlap) {
   if (!inWorld())
     return {};
-  
+
   // thanks to new prediction: do each one by one so that previous modifications affect placeability
-  
+
   TileModificationList success, failures, temp;
   TileModificationList const* list = &modificationList;
 
@@ -398,12 +398,12 @@ TileModificationList WorldClient::applyTileModifications(TileModificationList co
 TileModificationList WorldClient::replaceTiles(TileModificationList const& modificationList, TileDamage const& tileDamage, bool applyDamage) {
   if (!inWorld())
     return {};
-  
+
   // Tell client it can't send a replace packet
   auto netRules = m_clientState.netCompatibilityRules();
   if (netRules.isLegacy() || netRules.version() <= 3)
     return modificationList;
-  
+
   TileModificationList success, failures;
   for (auto pair : modificationList) {
     if (!isTileProtected(pair.first) && WorldImpl::validateTileReplacement(pair.second))
@@ -547,7 +547,7 @@ void WorldClient::render(WorldRenderData& renderData, unsigned bufferTiles) {
       try { entity->render(&renderCallback); }
       catch (StarException const& e) {
         if (entity->isMaster()) // this is YOUR problem!!
-          throw e; 
+          throw e;
         else { // this is THEIR problem!!
           Logger::error("WorldClient: Exception caught in {}::render ({}): {}", EntityTypeNames.getRight(entity->entityType()), entity->entityId(), e.what());
           auto toolUser = as<ToolUserEntity>(entity);
@@ -558,7 +558,7 @@ void WorldClient::render(WorldRenderData& renderData, unsigned bufferTiles) {
           renderCallback.addDrawable(std::move(drawable), RenderLayerMiddleParticle);
         }
       }
-      
+
 
       EntityDrawables ed;
       for (auto& p : renderCallback.drawables) {
@@ -592,7 +592,7 @@ void WorldClient::render(WorldRenderData& renderData, unsigned bufferTiles) {
         for (auto& p : renderCallback.particles)
           p.directives.append(directives->get(directiveIndex));
       }
-      
+
       m_particles->addParticles(std::move(renderCallback.particles));
       m_samples.appendAll(std::move(renderCallback.audios));
       m_previewTiles.appendAll(std::move(renderCallback.previewTiles));
@@ -1114,7 +1114,7 @@ void WorldClient::handleIncomingPackets(List<PacketPtr> const& packets) {
     } else if (auto pongPacket = as<PongPacket>(packet)) {
       if (pongPacket->time)
         m_latency = Time::monotonicMilliseconds() - pongPacket->time;
-      else if (m_pingTime) 
+      else if (m_pingTime)
         m_latency = Time::monotonicMilliseconds() - m_pingTime.take();
 
     } else {
@@ -1179,7 +1179,7 @@ void WorldClient::update(float dt) {
       try { entity->update(dt, m_currentStep); }
       catch (StarException const& e) {
         if (entity->isMaster()) // this is YOUR problem!!
-          throw e; 
+          throw e;
         else // this is THEIR problem!!
           Logger::error("WorldClient: Exception caught in {}::update ({}): {}", EntityTypeNames.getRight(entity->entityType()), entity->entityId(), e.what());
       }
@@ -1586,9 +1586,9 @@ void WorldClient::handleDamageNotifications() {
       // default to normal hit
       HitType effectHitType = damageKind.effects.get(material).contains(damageNotification.hitType) ? damageNotification.hitType : HitType::Hit;
       m_samples.appendAll(soundsFromDefinition(damageKind.effects.get(material).get(effectHitType).sounds, damageNotification.position));
-      
+
       auto hitParticles = particlesFromDefinition(damageKind.effects.get(material).get(effectHitType).particles, damageNotification.position);
-      
+
       const List<Directives>* directives = nullptr;
       if (auto& worldTemplate = m_worldTemplate) {
         if (const auto& parameters = worldTemplate->worldParameters())
@@ -1600,7 +1600,7 @@ void WorldClient::handleDamageNotifications() {
         for (auto& p : hitParticles)
           p.directives.append(directives->get(directiveIndex));
       }
-      
+
       m_particles->addParticles(hitParticles);
     }
   }
@@ -1842,7 +1842,7 @@ void WorldClient::initWorld(WorldStartPacket const& startPacket) {
   m_lightIntensityCalculator.setParameters(assets->json("/lighting.config:intensity"));
 
   m_inWorld = true;
-  
+
   if (!m_mainPlayer->isDead()) {
     m_mainPlayer->init(this, m_entityMap->reserveEntityId(), EntityMode::Master);
     m_entityMap->addEntity(m_mainPlayer);
@@ -2192,8 +2192,8 @@ void WorldClient::setProperty(String const& propertyName, Json const& property) 
   m_outgoingPackets.append(make_shared<UpdateWorldPropertiesPacket>(JsonObject{{propertyName, property}}));
 }
 
-bool WorldClient::playerCanReachEntity(EntityId entityId, bool preferInteractive) const {
-  return m_mainPlayer->isAdmin() || canReachEntity(m_mainPlayer->position(), m_mainPlayer->interactRadius(), entityId, preferInteractive);
+bool WorldClient::playerCanReachEntity(EntityId entityId, bool preferInteractive, Maybe<float> radius) const {
+  return m_mainPlayer->isAdmin() || canReachEntity(m_mainPlayer->position(), radius.value(m_mainPlayer->interactRadius()), entityId, preferInteractive);
 }
 
 void WorldClient::disconnectAllWires(Vec2I wireEntityPosition, WireNode const& node) {

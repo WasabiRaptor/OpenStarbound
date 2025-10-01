@@ -26,6 +26,7 @@ public:
 
 private:
   EntityId m_sourceEntityId;
+  Maybe<float> m_sourceRadius;
   UniverseClientPtr m_client;
   PaneManager* m_paneManager;
   List<pair<WarpAction, bool>> m_destinations;
