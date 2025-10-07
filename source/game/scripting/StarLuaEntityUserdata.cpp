@@ -412,6 +412,8 @@ LuaMethods<EntityPtr> LuaUserDataMethods<EntityPtr>::make() {
     methods.registerMethod("facingDirection", [&](EntityPtr entity) -> Maybe<int> {
         if (auto actor = as<ActorEntity>(entity))
             return numericalDirection(actor->movementController()->facingDirection());
+        else if (auto object = as<Object>(entity))
+            return numericalDirection(object->direction());
         return {};
     });
     methods.registerMethod("crouching", [&](EntityPtr entity) -> Maybe<bool> {
