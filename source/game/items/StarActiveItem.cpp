@@ -76,7 +76,6 @@ void ActiveItem::init(ToolUserEntity* owner, ToolHand hand) {
       m_script.addCallbacks("player", LuaBindings::makePlayerCallbacks(player));
     if (auto npc = as<Npc>(owner))
       m_script.addCallbacks("npc", npc->makeNpcCallbacks());
-
     m_script.addCallbacks("entity", LuaBindings::makeEntityCallbacks(as<Entity>(owner)));
     m_script.init(world());
     m_currentFireMode = FireMode::None;
