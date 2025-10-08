@@ -344,12 +344,61 @@ void Humanoid::setIdentity(HumanoidIdentity const& identity) {
     m_networkedAnimator.resetLocalTransformationGroup("personalityArmOffset");
     m_networkedAnimator.translateLocalTransformationGroup("personalityArmOffset", m_identity.personality.armOffset / TilePixels);
 
-    m_networkedAnimator.setLocalTag("hairFrameset", m_identity.hairType.empty() ? "" : (String)strf("{}/{}.png", m_identity.hairGroup, m_identity.hairType));
-    m_networkedAnimator.setLocalTag("facialHairFrameset", m_identity.facialHairType.empty() ? "" : (String)strf("{}/{}.png", m_identity.facialHairGroup, m_identity.facialHairType));
-    m_networkedAnimator.setLocalTag("facialMaskFrameset", m_identity.facialMaskType.empty() ? "" : (String)strf("{}/{}.png", m_identity.facialMaskGroup, m_identity.facialMaskType));
-
     for (auto p : m_identityFramesetTags) {
-      m_networkedAnimator.setLocalTag(m_networkedAnimator.applyPartTags("anchor", p.first), m_networkedAnimator.applyPartTags("anchor", p.second));
+      bool invalid = false;
+      auto applied = p.second.maybeLookupTagsView([&](StringView tag) -> StringView {
+        if (tag == "name") {
+          invalid = invalid || m_identity.name.empty();
+          return m_identity.name;
+        } else if (tag == "species") {
+          invalid = invalid || m_identity.species.empty();
+          return m_identity.species;
+        } else if (tag == "gender") {
+          return GenderNames.getRight(m_identity.gender);
+        } else if (tag == "hairGroup") {
+          invalid = invalid || m_identity.hairGroup.empty();
+          return m_identity.hairGroup;
+        } else if (tag == "hairType") {
+          invalid = invalid || m_identity.hairType.empty();
+          return m_identity.hairType;
+        } else if (tag == "hairDirectives") {
+          invalid = invalid || m_identity.hairDirectives.empty();
+          return m_identity.hairDirectives.string();
+        } else if (tag == "facialHairGroup") {
+          invalid = invalid || m_identity.facialHairGroup.empty();
+          return m_identity.facialHairGroup;
+        } else if (tag == "facialHairType") {
+          invalid = invalid || m_identity.facialHairType.empty();
+          return m_identity.facialHairType;
+        } else if (tag == "facialHairDirectives") {
+          invalid = invalid || m_identity.facialHairDirectives.empty();
+          return m_identity.facialHairDirectives.string();
+        } else if (tag == "facialMaskGroup") {
+          invalid = invalid || m_identity.facialMaskGroup.empty();
+          return m_identity.facialMaskGroup;
+        } else if (tag == "facialMaskType") {
+          invalid = invalid || m_identity.facialMaskType.empty();
+          return m_identity.facialMaskType;
+        } else if (tag == "facialMaskDirectives") {
+          invalid = invalid || m_identity.facialMaskDirectives.empty();
+          return m_identity.facialMaskDirectives.string();
+        } else if (tag == "bodyDirectives") {
+          invalid = invalid || m_identity.bodyDirectives.empty();
+          return m_identity.bodyDirectives.string();
+        } else if (tag == "emoteDirectives") {
+          invalid = invalid || m_identity.emoteDirectives.empty();
+          return m_identity.emoteDirectives.string();
+        } else if (tag == "personalityIdle") {
+          invalid = invalid || m_identity.personality.idle.empty();
+          return m_identity.personality.idle;
+        } else if (tag == "personalityArmIdle") {
+          invalid = invalid || m_identity.personality.armIdle.empty();
+          return m_identity.personality.armIdle;
+        }
+        return StringView("default");
+      });
+
+      m_networkedAnimator.setLocalTag(p.first, invalid ? "" : applied.value());
     }
   }
 }
