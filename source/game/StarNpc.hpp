@@ -221,11 +221,12 @@ public:
 
   bool forceNude() const;
 
+  LuaCallbacks makeNpcCallbacks();
+
 private:
   Vec2F getAbsolutePosition(Vec2F relativePosition) const;
 
   void tickShared(float dt);
-  LuaCallbacks makeNpcCallbacks();
 
   void setupNetStates();
   void getNetStates(bool initial);

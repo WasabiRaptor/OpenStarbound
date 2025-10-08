@@ -12,6 +12,7 @@
 #include "StarDataStreamExtra.hpp"
 #include "StarPlayer.hpp"
 #include "StarEmoteEntity.hpp"
+#include "StarNpc.hpp"
 
 namespace Star {
 
@@ -73,6 +74,8 @@ void ActiveItem::init(ToolUserEntity* owner, ToolHand hand) {
     m_script.addActorMovementCallbacks(owner->movementController());
     if (auto player = as<Player>(owner))
       m_script.addCallbacks("player", LuaBindings::makePlayerCallbacks(player));
+    if (auto npc = as<Npc>(owner))
+      m_script.addCallbacks("npc", npc->makeNpcCallbacks());
     m_script.addCallbacks("entity", LuaBindings::makeEntityCallbacks(as<Entity>(owner)));
     m_script.init(world());
     m_currentFireMode = FireMode::None;
@@ -103,6 +106,7 @@ void ActiveItem::uninit() {
     m_script.removeCallbacks("status");
     m_script.removeActorMovementCallbacks();
     m_script.removeCallbacks("player");
+    m_script.removeCallbacks("npc");
     m_script.removeCallbacks("entity");
   }
   if (world()->isClient()) {
