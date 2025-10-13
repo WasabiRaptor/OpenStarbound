@@ -345,60 +345,60 @@ void Humanoid::setIdentity(HumanoidIdentity const& identity) {
     m_networkedAnimator.translateLocalTransformationGroup("personalityArmOffset", m_identity.personality.armOffset / TilePixels);
 
     for (auto p : m_identityFramesetTags) {
-      bool invalid = false;
+      bool valid = true;
       auto applied = p.second.maybeLookupTagsView([&](StringView tag) -> StringView {
         if (tag == "name") {
-          invalid = invalid || m_identity.name.empty();
+          valid = valid && !m_identity.name.empty();
           return m_identity.name;
         } else if (tag == "species") {
-          invalid = invalid || m_identity.species.empty();
+          valid = valid && !m_identity.species.empty();
           return m_identity.species;
         } else if (tag == "gender") {
           return GenderNames.getRight(m_identity.gender);
         } else if (tag == "hairGroup") {
-          invalid = invalid || m_identity.hairGroup.empty();
+          valid = valid && !m_identity.hairGroup.empty();
           return m_identity.hairGroup;
         } else if (tag == "hairType") {
-          invalid = invalid || m_identity.hairType.empty();
+          valid = valid && !m_identity.hairType.empty();
           return m_identity.hairType;
         } else if (tag == "hairDirectives") {
-          invalid = invalid || m_identity.hairDirectives.empty();
+          valid = valid && !m_identity.hairDirectives.empty();
           return m_identity.hairDirectives.string();
         } else if (tag == "facialHairGroup") {
-          invalid = invalid || m_identity.facialHairGroup.empty();
+          valid = valid && !m_identity.facialHairGroup.empty();
           return m_identity.facialHairGroup;
         } else if (tag == "facialHairType") {
-          invalid = invalid || m_identity.facialHairType.empty();
+          valid = valid && !m_identity.facialHairType.empty();
           return m_identity.facialHairType;
         } else if (tag == "facialHairDirectives") {
-          invalid = invalid || m_identity.facialHairDirectives.empty();
+          valid = valid && !m_identity.facialHairDirectives.empty();
           return m_identity.facialHairDirectives.string();
         } else if (tag == "facialMaskGroup") {
-          invalid = invalid || m_identity.facialMaskGroup.empty();
+          valid = valid && !m_identity.facialMaskGroup.empty();
           return m_identity.facialMaskGroup;
         } else if (tag == "facialMaskType") {
-          invalid = invalid || m_identity.facialMaskType.empty();
+          valid = valid && !m_identity.facialMaskType.empty();
           return m_identity.facialMaskType;
         } else if (tag == "facialMaskDirectives") {
-          invalid = invalid || m_identity.facialMaskDirectives.empty();
+          valid = valid && !m_identity.facialMaskDirectives.empty();
           return m_identity.facialMaskDirectives.string();
         } else if (tag == "bodyDirectives") {
-          invalid = invalid || m_identity.bodyDirectives.empty();
+          valid = valid && !m_identity.bodyDirectives.empty();
           return m_identity.bodyDirectives.string();
         } else if (tag == "emoteDirectives") {
-          invalid = invalid || m_identity.emoteDirectives.empty();
+          valid = valid && !m_identity.emoteDirectives.empty();
           return m_identity.emoteDirectives.string();
         } else if (tag == "personalityIdle") {
-          invalid = invalid || m_identity.personality.idle.empty();
+          valid = valid && !m_identity.personality.idle.empty();
           return m_identity.personality.idle;
         } else if (tag == "personalityArmIdle") {
-          invalid = invalid || m_identity.personality.armIdle.empty();
+          valid = valid && !m_identity.personality.armIdle.empty();
           return m_identity.personality.armIdle;
         }
         return StringView("default");
       });
 
-      m_networkedAnimator.setLocalTag(p.first, invalid ? "" : applied.value());
+      m_networkedAnimator.setLocalTag(p.first, valid ? applied.value() : "");
     }
   }
 }
