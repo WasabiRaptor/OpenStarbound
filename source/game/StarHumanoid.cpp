@@ -397,7 +397,7 @@ void Humanoid::setIdentity(HumanoidIdentity const& identity) {
         return StringView("default");
       });
 
-      m_networkedAnimator.setLocalTag(p.first, valid ? applied.value() : "");
+      m_networkedAnimator.setLocalTag(p.first, valid ? applied.value(p.second) : "");
     }
   }
 }
