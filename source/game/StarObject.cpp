@@ -83,6 +83,12 @@ Object::Object(ObjectConfigConstPtr config, Json const& parameters) {
   if (!m_offeredQuests.get().empty() || !m_turnInQuests.get().empty())
     m_interactive.set(true);
 
+  auto colorName = configValue("color", "default").toString().takeUtf8();
+  m_imageKeys.set("color", colorName);
+  for (auto p : configValue("defaultImageKeys", JsonObject()).toObject())
+    m_imageKeys.set(p.first, p.second.toString());
+
+
   setUniqueId(configValue("uniqueId").optString());
 
   m_netGroup.addNetElement(&m_parameters);
