@@ -283,16 +283,10 @@ void CharCreationPane::changed() {
     if (auto button = fetchChild<ButtonWidget>(strf("gender.{}", i)))
       button->setOverlayImage(species.genderOptions[i].image);
 
-  for (auto const& nameDefPair : root.speciesDatabase()->allSpecies()) {
-    String name;
-    SpeciesDefinitionPtr def;
-    std::tie(name, def) = nameDefPair;
-    // NOTE: Probably not hot enough to matter, but this contains and indexOf makes this loop
-    // O(n^2).  This is less than ideal.
-    if (m_speciesList.contains(name)) {
-      if (auto bw = fetchChild<ButtonWidget>(strf("species.{}", m_speciesList.indexOf(name))))
-        bw->setOverlayImage(def->options().genderOptions[genderIdx].characterImage);
-    }
+  for (size_t i = 0; i < m_speciesList.size(); i++) {
+    SpeciesDefinitionPtr def = root.speciesDatabase()->species(m_speciesList[i]);
+    if (auto bw = fetchChild<ButtonWidget>(strf("species.{}", i)))
+      bw->setOverlayImage(def->options().genderOptions[genderIdx].characterImage);
   }
 
   auto portrait = fetchChild<PortraitWidget>("charPreview");
