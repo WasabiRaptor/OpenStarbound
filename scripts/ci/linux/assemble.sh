@@ -62,8 +62,8 @@ cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md
 cp README.md client_distribution/OpenSB_readme.md
 cp README.md server_distribution/OpenSB_readme.md
 
-cp scripts/ci/linux/setup.sh client_distribution/setup.sh
-cp scripts/ci/linux/setup.sh server_distribution/setup.sh
+cp scripts/ci/linux/install.sh client_distribution/install.sh
+cp scripts/ci/linux/install.sh server_distribution/install.sh
 
 mkdir server_distribution/linux
 

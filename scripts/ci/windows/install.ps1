@@ -21,7 +21,7 @@ if ($args.Count -ne 0) {
         Write-Host "Couldn't find Steam!"
         Write-Host ""
         Write-Host "You may manually specify a Starbound installation path instead by re-running this script like so:"
-        Write-Host "`tsetup.bat C:\full\path\to\starbound\root\dir"
+        Write-Host "`tinstall.bat C:\full\path\to\starbound\root\dir"
         exit 1
     }
 
@@ -55,7 +55,7 @@ if ($args.Count -ne 0) {
         Write-Host "Please ensure that your SteamLibrary is setup correctly!"
         Write-Host "If this is a new installation of Starbound, you may need to restart Steam first for this script to be able to find it."
         Write-Host "Alternatively, you may manually specify a Starbound installation path by re-running this script like so:"
-        Write-Host "`tsetup.bat C:\full\path\to\starbound\root\dir"
+        Write-Host "`tinstall.bat C:\full\path\to\starbound\root\dir"
         exit 1
     }
 }
@@ -73,7 +73,7 @@ if (-not (Test-Path "$STARBOUND_INSTALL_PATH\\win64\\starbound.exe")) {
 
     if ($DID_FIND_STARBOUND -eq 1) {
         Write-Host "You can manually specify your Starbound installation path instead by re-running this script like so:"
-        Write-Host "`tsetup.bat C:\full\path\to\starbound\root\dir"
+        Write-Host "`tinstall.bat C:\full\path\to\starbound\root\dir"
     } else {
         Write-Host "Please double check that the path you typed points towards the root folder of your Starbound installation."
     }
