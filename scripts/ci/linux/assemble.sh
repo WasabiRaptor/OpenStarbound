@@ -62,6 +62,9 @@ cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md
 cp README.md client_distribution/OpenSB_readme.md
 cp README.md server_distribution/OpenSB_readme.md
 
+cp scripts/ci/linux/setup.sh client_distribution/setup.sh
+cp scripts/ci/linux/setup.sh server_distribution/setup.sh
+
 mkdir server_distribution/linux
 
 # makes the server function on older Linux versions (this is so stupid)
