@@ -23,19 +23,14 @@ touch client_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config SB_MetroidDoors client_distribution/mods/Raptors_MetroidDoors.pak
 
 cp Starbecue/README.md client_distribution/Starbecue_readme.md
-cp Starbecue/README.md server_distribution/Starbecue_readme.md
 
 cp Starbecue/features.md client_distribution/Starbecue_features.md
-cp Starbecue/features.md server_distribution/Starbecue_features.md
 
 cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md
-cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md
 
 cp README.md client_distribution/OpenSB_readme.md
-cp README.md server_distribution/OpenSB_readme.md
 
 cp scripts/ci/macos/setup.sh client_distribution/setup.sh
-cp scripts/ci/macos/setup.sh server_distribution/setup.sh
 
 mkdir client_distribution/osx
 cp -LR scripts/ci/macos/Starbound.app client_distribution/osx/
