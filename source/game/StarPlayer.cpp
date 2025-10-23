@@ -1432,7 +1432,14 @@ void Player::refreshArmor() {
 
 void Player::refreshHumanoid() const {
   try {
-    if (m_armor->setupHumanoid(*humanoid(), forceNude())) {
+    if (m_armor->setupHumanoid(
+      *humanoid(),
+      forceNude(),
+      m_statusController->statPositive("headNude"),
+      m_statusController->statPositive("chestNude"),
+      m_statusController->statPositive("legsNude"),
+      m_statusController->statPositive("backNude")
+    )) {
       m_movementController->resetBaseParameters(ActorMovementParameters(jsonMerge(humanoid()->defaultMovementParameters(), humanoid()->playerMovementParameters().value(m_config->movementParameters))));
     }
   }
@@ -2908,7 +2915,14 @@ void Player::refreshHumanoidParameters() {
   auto armor = m_armor->diskStore();
   m_armor->reset();
   m_armor->diskLoad(armor);
-  m_armor->setupHumanoid(*humanoid(), forceNude());
+  m_armor->setupHumanoid(
+    *humanoid(),
+    forceNude(),
+    m_statusController->statPositive("headNude"),
+    m_statusController->statPositive("chestNude"),
+    m_statusController->statPositive("legsNude"),
+    m_statusController->statPositive("backNude")
+  );
 
   m_movementController->resetBaseParameters(ActorMovementParameters(jsonMerge(humanoid()->defaultMovementParameters(), humanoid()->playerMovementParameters().value(m_config->movementParameters))));
 

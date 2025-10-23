@@ -407,7 +407,7 @@ List<Drawable> NpcDatabase::npcPortrait(NpcVariant const& npcVariant, PortraitMo
     }
   }
 
-  armor.setupHumanoid(humanoid, false);
+  armor.setupHumanoid(humanoid, false, false, false, false, false);
 
   return humanoid.renderPortrait(mode);
 }
