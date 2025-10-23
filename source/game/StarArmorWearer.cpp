@@ -28,13 +28,17 @@ ArmorWearer::ArmorWearer() : m_lastNude(true) {
   reset();
 }
 
-bool ArmorWearer::setupHumanoid(Humanoid& humanoid, bool forceNude) {
-  bool nudeChanged = m_lastNude != forceNude;
+bool ArmorWearer::setupHumanoid(Humanoid& humanoid, bool forceNude, bool headNude, bool chestNude, bool legsNude, bool backNude) {
+  bool nudeChanged = (m_lastNude != forceNude) || (m_lastHeadNude != headNude) || (m_lastChestNude != chestNude) || (m_lastLegsNude != legsNude) || (m_lastBackNude != backNude);
   auto gender = humanoid.identity().gender;
   bool genderChanged = !m_lastGender || *m_lastGender != gender;
   Direction direction = humanoid.facingDirection();
   bool dirChanged = !m_lastDirection || *m_lastDirection != direction;
   m_lastNude = forceNude;
+  m_lastHeadNude = headNude;
+  m_lastChestNude = chestNude;
+  m_lastLegsNude = legsNude;
+  m_lastBackNude = backNude;
   m_lastGender = gender;
   m_lastDirection = direction;
 
@@ -74,7 +78,9 @@ bool ArmorWearer::setupHumanoid(Humanoid& humanoid, bool forceNude) {
       Armor& armor = m_armors[i];
       auto& item = armor.item;
       bool allowed = true;
-      if (!armor.visible || !item || !item->visible(i >= 8) || (forceNude && !item->bypassNude())) {
+      if (!armor.visible || !item || !item->visible(i >= 8) || (!item->bypassNude() && (
+        forceNude || (headNude && is<HeadArmor>(item)) || (chestNude && is<ChestArmor>(item)) || (legsNude && is<LegsArmor>(item)) || (backNude && is<BackArmor>(item))
+      ))) {
         allowed = false;
       } else if (!armor.isCosmetic) {
         uint8_t typeIndex = (uint8_t)armor.item->armorType();
@@ -124,7 +130,7 @@ void ArmorWearer::effects(EffectEmitter& effectEmitter) {
     auto& armor = m_armors[i];
     if (auto item = as<EffectSourceItem>(armor.item)) {
       auto armorType = armor.item->armorType();
-      if (!armor.visible || (!armor.isCosmetic && m_wornCosmeticTypes[(uint8_t)armorType] > 0))
+      if (!armor.isCurrentlyVisible || (!armor.isCosmetic && m_wornCosmeticTypes[(uint8_t)armorType] > 0))
         continue;
       auto newEffects = item->effectSources();
       if (armorType == ArmorType::Head)

@@ -27,7 +27,7 @@ public:
   ArmorWearer();
 
   // returns true if movement parameters changed
-  bool setupHumanoid(Humanoid& humanoid, bool forceNude);
+  bool setupHumanoid(Humanoid& humanoid, bool forceNude, bool headNude, bool chestNude, bool legsNude, bool backNude);
   void effects(EffectEmitter& effectEmitter);
   List<PersistentStatusEffect> statusEffects(bool cosmeticOnly = false) const;
 
@@ -91,6 +91,10 @@ private:
   Maybe<Gender> m_lastGender;
   Maybe<Direction> m_lastDirection;
   bool m_lastNude;
+  bool m_lastHeadNude;
+  bool m_lastChestNude;
+  bool m_lastLegsNude;
+  bool m_lastBackNude;
 };
 
 }

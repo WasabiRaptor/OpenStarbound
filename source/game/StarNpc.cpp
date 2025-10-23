@@ -178,7 +178,14 @@ void Npc::init(World* world, EntityId entityId, EntityMode mode) {
   m_statusController->init(this, m_movementController.get());
   m_tools->init(this);
 
-  m_armor->setupHumanoid(*humanoid(), forceNude());
+  m_armor->setupHumanoid(
+    *humanoid(),
+    forceNude(),
+    m_statusController->statPositive("headNude"),
+    m_statusController->statPositive("chestNude"),
+    m_statusController->statPositive("legsNude"),
+    m_statusController->statPositive("backNude")
+  );
 
   if (isMaster()) {
     m_movementController->resetAnchorState();
@@ -647,7 +654,14 @@ void Npc::tickShared(float dt) {
     }
   }
 
-  m_armor->setupHumanoid(*humanoid(), forceNude());
+  m_armor->setupHumanoid(
+    *humanoid(),
+    forceNude(),
+    m_statusController->statPositive("headNude"),
+    m_statusController->statPositive("chestNude"),
+    m_statusController->statPositive("legsNude"),
+    m_statusController->statPositive("backNude")
+  );
 
   m_tools->suppressItems(!canUseTool());
   m_tools->tick(dt, m_shifting.get(), {});
@@ -1460,7 +1474,14 @@ void Npc::refreshHumanoidParameters() {
   auto armor = m_armor->diskStore();
   m_armor->reset();
   m_armor->diskLoad(armor);
-  m_armor->setupHumanoid(*humanoid(), forceNude());
+  m_armor->setupHumanoid(
+    *humanoid(),
+    forceNude(),
+    m_statusController->statPositive("headNude"),
+    m_statusController->statPositive("chestNude"),
+    m_statusController->statPositive("legsNude"),
+    m_statusController->statPositive("backNude")
+  );
 
   m_movementController->resetBaseParameters(ActorMovementParameters(jsonMerge(humanoid()->defaultMovementParameters(), m_npcVariant.movementParameters)));
 
