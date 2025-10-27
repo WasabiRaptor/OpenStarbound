@@ -142,6 +142,11 @@ private:
   OrderedHashMap<String, DamageSourceConfig> m_damageSources;
 
   LoungePositions m_loungePositions;
+
+  EntityRenderLayer m_baseRenderLayer;
+  Maybe<EntityRenderLayer> m_overrideRenderLayer;
+
+  GameTimer m_slaveHeartbeatTimer;
 };
 
 }
