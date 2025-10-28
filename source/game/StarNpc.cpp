@@ -79,6 +79,9 @@ Npc::Npc(NpcVariant const& npcVariant) {
   m_identityUpdated = false;
   m_deathParticleBurst.set(humanoid()->defaultDeathParticles());
 
+  if (npcVariant.overrides && npcVariant.overrides.contains("scale"))
+    m_movementController->setScale(npcVariant.overrides.getFloat("scale"));
+
   m_statusController = make_shared<StatusController>(m_npcVariant.statusControllerSettings);
   m_statusController->setPersistentEffects("innate", m_npcVariant.innateStatusEffects);
   auto speciesDefinition = Root::singleton().speciesDatabase()->species(species());
