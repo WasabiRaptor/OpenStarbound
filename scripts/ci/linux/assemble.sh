@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 rm Starbecue -r -f
-git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
+git clone https://github.com/WasabiRaptor/Starbecue
 rm Fuck-Your-Race-Effects -r -f
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 rm sb_pokemon -r -f

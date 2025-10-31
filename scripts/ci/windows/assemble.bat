@@ -19,7 +19,7 @@ if exist Fuck-Your-Race-Effects rmdir Fuck-Your-Race-Effects /S /Q
 if exist sb_pokemon rmdir sb_pokemon /S /Q
 if exist SB_MetroidDoors rmdir SB_MetroidDoors /S /Q
 
-git clone https://github.com/WasabiRaptor/Starbecue -b 4.0
+git clone https://github.com/WasabiRaptor/Starbecue
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/sb_pokemon
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
