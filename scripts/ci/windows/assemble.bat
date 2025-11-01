@@ -36,10 +36,10 @@ copy Starbecue\FAQ.md %server%\Starbecue_FAQ.md /Y
 copy README.md %client%\OpenSB_readme.md /Y
 copy README.md %server%\OpenSB_readme.md /Y
 
-copy scripts/ci/windows/install.bat %client%\install.bat /Y
-copy scripts/ci/windows/install.bat %server%\install.bat /Y
-copy scripts/ci/windows/install.ps1 %client%\install.ps1 /Y
-copy scripts/ci/windows/install.ps1 %server%\install.ps1 /Y
+copy scripts\ci\windows\install.bat %client%\install.bat /Y
+copy scripts\ci\windows\install.bat %server%\install.bat /Y
+copy scripts\ci\windows\install.ps1 %client%\install.ps1 /Y
+copy scripts\ci\windows\install.ps1 %server%\install.ps1 /Y
 
 .\dist\asset_packer.exe -c scripts\packing.config assets\opensb %client%\assets\opensb.pak
 .\dist\asset_packer.exe -c scripts\packing.config Starbecue %client%\mods\starbecue.pak
