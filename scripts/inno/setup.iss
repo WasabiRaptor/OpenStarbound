@@ -35,7 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "windows\win\{#AppExeName}"; DestDir: "{app}\win\"; Flags: ignoreversion
+Source: "windows\win64\{#AppExeName}"; DestDir: "{app}\win64\"; Flags: ignoreversion
 Source: "windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -44,14 +44,14 @@ Name: "{app}"; Permissions: users-modify
 
 [Icons]
 ; Client
-Name: "{autoprograms}\{#AppName}"; Filename: "{app}\win\{#AppExeName}"
-Name: "{autodesktop}\{#AppName}"; Filename: "{app}\win\{#AppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#AppName}"; Filename: "{app}\win46\{#AppExeName}"
+Name: "{autodesktop}\{#AppName}"; Filename: "{app}\win64\{#AppExeName}"; Tasks: desktopicon
 ; Server
-Name: "{autoprograms}\{#AppName} Server"; Filename: "{app}\win\{#AppServerExeName}"
-Name: "{autodesktop}\{#AppName} Server"; Filename: "{app}\win\{#AppServerExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#AppName} Server"; Filename: "{app}\win64\{#AppServerExeName}"
+Name: "{autodesktop}\{#AppName} Server"; Filename: "{app}\win64\{#AppServerExeName}"; Tasks: desktopicon
 
 [InstallDelete]
-Type: files; Name: "{app}\win\SDL2.dll"
+Type: files; Name: "{app}\win64\SDL2.dll"
 
 [Run]
-Filename: "{app}\win\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\win64\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
