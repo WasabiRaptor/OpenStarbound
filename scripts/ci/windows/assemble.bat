@@ -7,8 +7,8 @@ mkdir %client%\storage
 mkdir %client%\mods
 mkdir %client%\logs
 mkdir %client%\assets
-mkdir %client%\win
-echo 211820 > %client%\win\steam_appid.txt
+mkdir %client%\win64
+echo 211820 > %client%\win64\steam_appid.txt
 
 set server=server_distribution
 if exist %server% rmdir %server% /S /Q
@@ -48,7 +48,7 @@ copy scripts\ci\windows\install.ps1 %server%\install.ps1 /Y
 .\dist\asset_packer.exe -c scripts\packing.config SB_MetroidDoors %client%\mods\Raptors_MetroidDoors.pak
 
 for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
-    xcopy "%%f" "%client%\win\" /Y
+    xcopy "%%f" "%client%\win64\" /Y
 )
 
 .\dist\asset_packer.exe -c scripts\packing.config -s assets\opensb %server%\assets\opensb.pak
@@ -58,7 +58,7 @@ for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
 .\dist\asset_packer.exe -c scripts\packing.config -s SB_MetroidDoors %server%\mods\Raptors_MetroidDoors.pak
 
 for /f "delims=" %%f in (scripts\ci\windows\files_server.txt) do (
-    xcopy "%%f" "%server%\win\" /Y
+    xcopy "%%f" "%server%\win64\" /Y
 )
 
 set win=windows

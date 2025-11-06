@@ -98,9 +98,9 @@ Remove-Item "$STEAM_STARBOUND_DIR\\mods\\SBQ_engine_assets*.pak" -ErrorAction Si
 
 # Copy new files
 Write-Host $STEAM_STARBOUND_DIR
-Copy-Item -Path "mods\*" -Destination "$STEAM_STARBOUND_DIR\mods\" -Recurse
-Copy-Item -Path "assets\*" -Destination "$STEAM_STARBOUND_DIR\assets\" -Recurse
-Copy-Item -Path "win\*" -Destination "$STEAM_STARBOUND_DIR\win64\" -Recurse
+Copy-Item -Path "mods\\*" -Destination "$STEAM_STARBOUND_DIR\\mods\\" -Recurse
+Copy-Item -Path "assets\\*" -Destination "$STEAM_STARBOUND_DIR\\assets\\" -Recurse
+Copy-Item -Path "win64\\*" -Destination "$STEAM_STARBOUND_DIR\\win64\\" -Recurse
 
 Write-Host "Installation completed!"
 Pause
