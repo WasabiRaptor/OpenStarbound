@@ -1,13 +1,18 @@
 #!/bin/sh -e
 
-rm Starbecue -r -f
+rm -rf Starbecue
 git clone https://github.com/WasabiRaptor/Starbecue
-rm Fuck-Your-Race-Effects -r -f
+rm -rf Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
-rm sb_pokemon -r -f
+rm -rf sb_pokemon
 git clone https://github.com/WasabiRaptor/sb_pokemon
-rm SB_MetroidDoors -r -f
+rm -rf SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
+rm -rf SBQ-compatibility
+git clone https://github.com/WasabiRaptor/SBQ-compatibility
+rm -rf SBQ-fockoff
+git clone https://github.com/FockoffPollo/SBQ-fockoff
+
 
 mkdir client_distribution
 mkdir client_distribution/assets
@@ -22,6 +27,8 @@ touch client_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects client_distribution/mods/ShutUpAboutRaceEffects.pak
 ./dist/asset_packer -c scripts/packing.config sb_pokemon client_distribution/mods/Raptors_Pokemon.pak
 ./dist/asset_packer -c scripts/packing.config SB_MetroidDoors client_distribution/mods/Raptors_MetroidDoors.pak
+./dist/asset_packer -c scripts/packing.config SBQ-compatibility client_distribution/mods/SBQ-compatibility.pak
+./dist/asset_packer -c scripts/packing.config SBQ-fockoff client_distribution/mods/SBQ-fockoff.pak
 
 mkdir client_distribution/linux
 cp \
@@ -49,6 +56,8 @@ touch server_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config -s Fuck-Your-Race-Effects server_distribution/mods/ShutUpAboutRaceEffects.pak
 ./dist/asset_packer -c scripts/packing.config -s sb_pokemon server_distribution/mods/Raptors_Pokemon.pak
 ./dist/asset_packer -c scripts/packing.config -s SB_MetroidDoors server_distribution/mods/Raptors_MetroidDoors.pak
+./dist/asset_packer -c scripts/packing.config -s SBQ-compatibility server_distribution/mods/SBQ-compatibility.pak
+./dist/asset_packer -c scripts/packing.config -s SBQ-fockoff server_distribution/mods/SBQ-fockoff.pak
 
 cp Starbecue/README.md client_distribution/Starbecue_readme.md
 cp Starbecue/README.md server_distribution/Starbecue_readme.md

@@ -18,11 +18,15 @@ if exist Starbecue rmdir Starbecue /S /Q
 if exist Fuck-Your-Race-Effects rmdir Fuck-Your-Race-Effects /S /Q
 if exist sb_pokemon rmdir sb_pokemon /S /Q
 if exist SB_MetroidDoors rmdir SB_MetroidDoors /S /Q
+if exist SBQ-compatibility rmdir SBQ-compatibility /S /Q
+if exist SBQ-fockoff rmdir SBQ-fockoff /S /Q
 
 git clone https://github.com/WasabiRaptor/Starbecue
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/sb_pokemon
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
+git clone https://github.com/WasabiRaptor/SBQ-compatibility
+git clone https://github.com/WasabiRaptor/SBQ-fockoff
 
 copy Starbecue\README.md %client%\Starbecue_readme.md /Y
 copy Starbecue\README.md %server%\Starbecue_readme.md /Y
@@ -46,6 +50,8 @@ copy scripts\ci\windows\install.ps1 %server%\install.ps1 /Y
 .\dist\asset_packer.exe -c scripts\packing.config Fuck-Your-Race-Effects %client%\mods\ShutUpAboutRaceEffects.pak
 .\dist\asset_packer.exe -c scripts\packing.config sb_pokemon %client%\mods\Raptors_Pokemon.pak
 .\dist\asset_packer.exe -c scripts\packing.config SB_MetroidDoors %client%\mods\Raptors_MetroidDoors.pak
+.\dist\asset_packer.exe -c scripts\packing.config SBQ-compatibility %client%\mods\SBQ-compatibility.pak
+.\dist\asset_packer.exe -c scripts\packing.config SBQ-fockoff %client%\mods\SBQ-fockoff.pak
 
 for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
     xcopy "%%f" "%client%\win64\" /Y
@@ -56,6 +62,8 @@ for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
 .\dist\asset_packer.exe -c scripts\packing.config -s Fuck-Your-Race-Effects %server%\mods\ShutUpAboutRaceEffects.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s sb_pokemon %server%\mods\Raptors_Pokemon.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s SB_MetroidDoors %server%\mods\Raptors_MetroidDoors.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s SBQ-compatibility %server%\mods\SBQ-compatibility.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s SBQ-fockoff %server%\mods\SBQ-fockoff.pak
 
 for /f "delims=" %%f in (scripts\ci\windows\files_server.txt) do (
     xcopy "%%f" "%server%\win64\" /Y
