@@ -9,6 +9,8 @@ rm -rf SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 rm -rf SBQ-compatibility
 git clone https://github.com/WasabiRaptor/SBQ-compatibility
+rm -rf SBQ-LokiVulpix
+git clone https://github.com/WasabiRaptor/SBQ-LokiVulpix
 rm -rf SBQ-fockoff
 git clone https://github.com/FockoffPollo/SBQ-fockoff
 
@@ -26,6 +28,7 @@ touch client_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config sb_pokemon client_distribution/mods/Raptors_Pokemon.pak
 ./dist/asset_packer -c scripts/packing.config SB_MetroidDoors client_distribution/mods/Raptors_MetroidDoors.pak
 ./dist/asset_packer -c scripts/packing.config SBQ-compatibility client_distribution/mods/SBQ-compatibility.pak
+./dist/asset_packer -c scripts/packing.config SBQ-LokiVulpix client_distribution/mods/SBQ-LokiVulpix.pak
 ./dist/asset_packer -c scripts/packing.config SBQ-fockoff client_distribution/mods/SBQ-fockoff.pak
 
 cp Starbecue/README.md client_distribution/Starbecue_readme.md
