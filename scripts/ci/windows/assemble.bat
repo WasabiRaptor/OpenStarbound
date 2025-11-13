@@ -28,7 +28,7 @@ git clone https://github.com/WasabiRaptor/sb_pokemon
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SBQ-compatibility
 git clone https://github.com/WasabiRaptor/SBQ-LokiVulpix
-git clone https://github.com/WasabiRaptor/SBQ-fockoff
+git clone https://github.com/FockoffPollo/SBQ-fockoff
 
 copy Starbecue\README.md %client%\Starbecue_readme.md /Y
 copy Starbecue\README.md %server%\Starbecue_readme.md /Y
