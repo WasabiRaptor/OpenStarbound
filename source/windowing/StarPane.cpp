@@ -416,71 +416,86 @@ LuaCallbacks Pane::makePaneCallbacks() {
 
   callbacks.registerCallback("drawable", []() -> LuaCallbacks {
     LuaCallbacks callbacks;
-    callbacks.registerCallback("boundBox", [](Drawable drawable, bool cropImages) -> RectF {
-      return drawable.boundBox(cropImages);
+    callbacks.registerCallback("boundBox", [](Json config, bool cropImages) -> RectF {
+      return Drawable(config).boundBox(cropImages);
     });
-    callbacks.registerCallback("boundBoxAll", [](List<Drawable> drawables, bool cropImages) -> RectF {
-      return Drawable::boundBoxAll(drawables, cropImages);
+    callbacks.registerCallback("boundBoxAll", [](JsonArray config, bool cropImages) -> RectF {
+      return Drawable::boundBoxAll(config.transformed([](Json config) -> Drawable {return Drawable(config);}), cropImages);
     });
-    callbacks.registerCallback("translate", [](Drawable drawable, Vec2F translation) -> Drawable {
+    callbacks.registerCallback("translate", [](Json config, Vec2F translation) -> Drawable {
+      Drawable drawable(config);
       drawable.translate(translation);
       return drawable;
     });
-    callbacks.registerCallback("translateAll", [](List<Drawable> drawables, Vec2F translation) -> List<Drawable> {
+    callbacks.registerCallback("translateAll", [](JsonArray config, Vec2F translation) -> List<Drawable> {
+      auto drawables = config.transformed([](Json config) -> Drawable {return Drawable(config);});
       Drawable::translateAll(drawables, translation);
       return drawables;
     });
-    callbacks.registerCallback("scale", [](Drawable drawable, Vec2F scale, Maybe<Vec2F> scaleCenter) -> Drawable {
+    callbacks.registerCallback("scale", [](Json config, Vec2F scale, Maybe<Vec2F> scaleCenter) -> Drawable {
+      Drawable drawable(config);
       drawable.scale(scale, scaleCenter.value(Vec2F()));
       return drawable;
     });
-    callbacks.registerCallback("scaleAll", [](List<Drawable> drawables, Vec2F scale, Maybe<Vec2F> scaleCenter) -> List<Drawable> {
+    callbacks.registerCallback("scaleAll", [](JsonArray config, Vec2F scale, Maybe<Vec2F> scaleCenter) -> List<Drawable> {
+      auto drawables = config.transformed([](Json config) -> Drawable {return Drawable(config);});
       Drawable::scaleAll(drawables, scale, scaleCenter.value(Vec2F()));
       return drawables;
     });
-    callbacks.registerCallback("rotate", [](Drawable drawable, float rotate, Maybe<Vec2F> rotateCenter) -> Drawable {
+    callbacks.registerCallback("rotate", [](Json config, float rotate, Maybe<Vec2F> rotateCenter) -> Drawable {
+      Drawable drawable(config);
       drawable.rotate(rotate, rotateCenter.value(Vec2F()));
       return drawable;
     });
-    callbacks.registerCallback("rotateAll", [](List<Drawable> drawables, float rotate, Maybe<Vec2F> rotateCenter) -> List<Drawable> {
+    callbacks.registerCallback("rotateAll", [](JsonArray config, float rotate, Maybe<Vec2F> rotateCenter) -> List<Drawable> {
+      auto drawables = config.transformed([](Json config) -> Drawable {return Drawable(config);});
       Drawable::rotateAll(drawables, rotate, rotateCenter.value(Vec2F()));
       return drawables;
     });
-    callbacks.registerCallback("rotateDegrees", [](Drawable drawable, float rotate, Maybe<Vec2F> rotateCenter) -> Drawable {
+    callbacks.registerCallback("rotateDegrees", [](Json config, float rotate, Maybe<Vec2F> rotateCenter) -> Drawable {
+      Drawable drawable(config);
       drawable.rotate(rotate * Star::Constants::pi / 180, rotateCenter.value(Vec2F()));
       return drawable;
     });
-    callbacks.registerCallback("rotateDegreesAll", [](List<Drawable> drawables, float rotate, Maybe<Vec2F> rotateCenter) -> List<Drawable> {
+    callbacks.registerCallback("rotateDegreesAll", [](JsonArray config, float rotate, Maybe<Vec2F> rotateCenter) -> List<Drawable> {
+      auto drawables = config.transformed([](Json config) -> Drawable {return Drawable(config);});
       Drawable::rotateAll(drawables, rotate * Star::Constants::pi / 180, rotateCenter.value(Vec2F()));
       return drawables;
     });
-    callbacks.registerCallback("transform", [](Drawable drawable, Mat3F transformation) -> Drawable {
+    callbacks.registerCallback("transform", [](Json config, Mat3F transformation) -> Drawable {
+      Drawable drawable(config);
       drawable.transform(transformation);
       return drawable;
     });
-    callbacks.registerCallback("transformAll", [](List<Drawable> drawables, Mat3F transformation) -> List<Drawable> {
+    callbacks.registerCallback("transformAll", [](JsonArray config, Mat3F transformation) -> List<Drawable> {
+      auto drawables = config.transformed([](Json config) -> Drawable {return Drawable(config);});
       Drawable::transformAll(drawables, transformation);
       return drawables;
     });
-    callbacks.registerCallback("rebase", [](Drawable drawable, Maybe<Vec2F> newBase) -> Drawable {
+    callbacks.registerCallback("rebase", [](Json config, Maybe<Vec2F> newBase) -> Drawable {
+      Drawable drawable(config);
       drawable.rebase(newBase.value(Vec2F()));
       return drawable;
     });
-    callbacks.registerCallback("rebaseAll", [](List<Drawable> drawables, Maybe<Vec2F> newBase) -> List<Drawable> {
+    callbacks.registerCallback("rebaseAll", [](JsonArray config, Maybe<Vec2F> newBase) -> List<Drawable> {
+      auto drawables = config.transformed([](Json config) -> Drawable {return Drawable(config);});
       Drawable::rebaseAll(drawables, newBase.value(Vec2F()));
       return drawables;
     });
-    callbacks.registerCallback("addDirectives", [](Drawable drawable, String directives, bool keepCenter) -> Drawable {
+    callbacks.registerCallback("addDirectives", [](Json config, String directives, bool keepCenter) -> Drawable {
+      Drawable drawable(config);
       if (drawable.isImage())
         drawable.imagePart().addDirectives(directives, keepCenter);
       return drawable;
     });
-    callbacks.registerCallback("addDirectivesGroup", [](Drawable drawable, String directives, bool keepCenter) -> Drawable {
+    callbacks.registerCallback("addDirectivesGroup", [](Json config, String directives, bool keepCenter) -> Drawable {
+      Drawable drawable(config);
       if (drawable.isImage())
         drawable.imagePart().addDirectivesGroup(directives, keepCenter);
       return drawable;
     });
-    callbacks.registerCallback("removeDirectives", [](Drawable drawable, bool keepCenter) -> Drawable {
+    callbacks.registerCallback("removeDirectives", [](Json config, bool keepCenter) -> Drawable {
+      Drawable drawable(config);
       if (drawable.isImage())
         drawable.imagePart().removeDirectives(keepCenter);
       return drawable;
