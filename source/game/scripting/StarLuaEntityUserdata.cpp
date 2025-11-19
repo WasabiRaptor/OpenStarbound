@@ -559,9 +559,9 @@ LuaMethods<EntityPtr> LuaUserDataMethods<EntityPtr>::make() {
     methods.registerMethod("getHumanoidParameters",
     [&](EntityPtr const& entity, bool withOverrides = false) -> Maybe<Json> {
         if (auto player = as<Player>(entity)) {
-            return player->getHumanoidParameters();
+            return (Json)player->getHumanoidParameters();
         } else if (auto npc = as<Npc>(entity)) {
-            return npc->getHumanoidParameters();
+            return (Json)npc->getHumanoidParameters();
         } else {
             return {};
         }
