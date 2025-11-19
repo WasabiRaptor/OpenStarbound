@@ -63,17 +63,17 @@ touch server_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config -s SBQ-LokiVulpix server_distribution/mods/SBQ-LokiVulpix.pak
 ./dist/asset_packer -c scripts/packing.config -s SBQ-fockoff server_distribution/mods/SBQ-fockoff.pak
 
-cp Starbecue/README.md client_distribution/Starbecue_readme.md
-cp Starbecue/README.md server_distribution/Starbecue_readme.md
+cp Starbecue/README.md client_distribution/Starbecue_readme.md.txt
+cp Starbecue/README.md server_distribution/Starbecue_readme.md.txt
 
-cp Starbecue/features.md client_distribution/Starbecue_features.md
-cp Starbecue/features.md server_distribution/Starbecue_features.md
+cp Starbecue/features.md client_distribution/Starbecue_features.md.txt
+cp Starbecue/features.md server_distribution/Starbecue_features.md.txt
 
-cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md
-cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md
+cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md.txt
+cp Starbecue/FAQ.md server_distribution/Starbecue_FAQ.md.txt
 
-cp README.md client_distribution/OpenSB_readme.md
-cp README.md server_distribution/OpenSB_readme.md
+cp README.md client_distribution/OpenSB_readme.md.txt
+cp README.md server_distribution/OpenSB_readme.md.txt
 
 cp scripts/ci/linux/install.sh client_distribution/install.sh
 cp scripts/ci/linux/install.sh server_distribution/install.sh

@@ -31,13 +31,13 @@ touch client_distribution/mods/mods_go_here
 ./dist/asset_packer -c scripts/packing.config SBQ-LokiVulpix client_distribution/mods/SBQ-LokiVulpix.pak
 ./dist/asset_packer -c scripts/packing.config SBQ-fockoff client_distribution/mods/SBQ-fockoff.pak
 
-cp Starbecue/README.md client_distribution/Starbecue_readme.md
+cp Starbecue/README.md client_distribution/Starbecue_readme.md.txt
 
-cp Starbecue/features.md client_distribution/Starbecue_features.md
+cp Starbecue/features.md client_distribution/Starbecue_features.md.txt
 
-cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md
+cp Starbecue/FAQ.md client_distribution/Starbecue_FAQ.md.txt
 
-cp README.md client_distribution/OpenSB_readme.md
+cp README.md client_distribution/OpenSB_readme.md.txt
 
 cp scripts/ci/macos/install.sh client_distribution/install.sh
 

@@ -30,17 +30,17 @@ git clone https://github.com/WasabiRaptor/SBQ-compatibility
 git clone https://github.com/WasabiRaptor/SBQ-LokiVulpix
 git clone https://github.com/FockoffPollo/SBQ-fockoff
 
-copy Starbecue\README.md %client%\Starbecue_readme.md /Y
-copy Starbecue\README.md %server%\Starbecue_readme.md /Y
+copy Starbecue\README.md %client%\Starbecue_readme.md.txt /Y
+copy Starbecue\README.md %server%\Starbecue_readme.md.txt /Y
 
-copy Starbecue\features.md %client%\Starbecue_features.md /Y
-copy Starbecue\features.md %server%\Starbecue_features.md /Y
+copy Starbecue\features.md %client%\Starbecue_features.md.txt /Y
+copy Starbecue\features.md %server%\Starbecue_features.md.txt /Y
 
-copy Starbecue\FAQ.md %client%\Starbecue_FAQ.md /Y
-copy Starbecue\FAQ.md %server%\Starbecue_FAQ.md /Y
+copy Starbecue\FAQ.md %client%\Starbecue_FAQ.md.txt /Y
+copy Starbecue\FAQ.md %server%\Starbecue_FAQ.md.txt /Y
 
-copy README.md %client%\OpenSB_readme.md /Y
-copy README.md %server%\OpenSB_readme.md /Y
+copy README.md %client%\OpenSB_readme.md.txt /Y
+copy README.md %server%\OpenSB_readme.md.txt /Y
 
 copy scripts\ci\windows\install.bat %client%\install.bat /Y
 copy scripts\ci\windows\install.bat %server%\install.bat /Y
