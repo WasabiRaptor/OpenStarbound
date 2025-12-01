@@ -348,56 +348,55 @@ void Humanoid::setIdentity(HumanoidIdentity const& identity) {
       bool valid = true;
       auto applied = p.second.maybeLookupTagsView([&](StringView tag) -> StringView {
         if (tag == "name") {
-          valid = valid && !m_identity.name.empty();
+          valid &= !m_identity.name.empty();
           return m_identity.name;
         } else if (tag == "species") {
-          valid = valid && !m_identity.species.empty();
+          valid &= !m_identity.species.empty();
           return m_identity.species;
         } else if (tag == "gender") {
           return GenderNames.getRight(m_identity.gender);
         } else if (tag == "hairGroup") {
-          valid = valid && !m_identity.hairGroup.empty();
+          valid &= !m_identity.hairGroup.empty();
           return m_identity.hairGroup;
         } else if (tag == "hairType") {
-          valid = valid && !m_identity.hairType.empty();
+          valid &= !m_identity.hairType.empty();
           return m_identity.hairType;
         } else if (tag == "hairDirectives") {
-          valid = valid && !m_identity.hairDirectives.empty();
+          valid &= !m_identity.hairDirectives.empty();
           return m_identity.hairDirectives.string();
         } else if (tag == "facialHairGroup") {
-          valid = valid && !m_identity.facialHairGroup.empty();
+          valid &= !m_identity.facialHairGroup.empty();
           return m_identity.facialHairGroup;
         } else if (tag == "facialHairType") {
-          valid = valid && !m_identity.facialHairType.empty();
+          valid &= !m_identity.facialHairType.empty();
           return m_identity.facialHairType;
         } else if (tag == "facialHairDirectives") {
-          valid = valid && !m_identity.facialHairDirectives.empty();
+          valid &= !m_identity.facialHairDirectives.empty();
           return m_identity.facialHairDirectives.string();
         } else if (tag == "facialMaskGroup") {
-          valid = valid && !m_identity.facialMaskGroup.empty();
+          valid &= !m_identity.facialMaskGroup.empty();
           return m_identity.facialMaskGroup;
         } else if (tag == "facialMaskType") {
-          valid = valid && !m_identity.facialMaskType.empty();
+          valid &= !m_identity.facialMaskType.empty();
           return m_identity.facialMaskType;
         } else if (tag == "facialMaskDirectives") {
-          valid = valid && !m_identity.facialMaskDirectives.empty();
+          valid &= !m_identity.facialMaskDirectives.empty();
           return m_identity.facialMaskDirectives.string();
         } else if (tag == "bodyDirectives") {
-          valid = valid && !m_identity.bodyDirectives.empty();
+          valid &= !m_identity.bodyDirectives.empty();
           return m_identity.bodyDirectives.string();
         } else if (tag == "emoteDirectives") {
-          valid = valid && !m_identity.emoteDirectives.empty();
+          valid &= !m_identity.emoteDirectives.empty();
           return m_identity.emoteDirectives.string();
         } else if (tag == "personalityIdle") {
-          valid = valid && !m_identity.personality.idle.empty();
+          valid &= !m_identity.personality.idle.empty();
           return m_identity.personality.idle;
         } else if (tag == "personalityArmIdle") {
-          valid = valid && !m_identity.personality.armIdle.empty();
+          valid &= !m_identity.personality.armIdle.empty();
           return m_identity.personality.armIdle;
         }
         return StringView("default");
       });
-
       m_networkedAnimator.setLocalTag(p.first, valid ? applied.value(p.second) : "");
     }
   }
@@ -590,6 +589,8 @@ void Humanoid::setWearableFromHead(uint8_t slot, HeadArmor const& head, Gender g
   auto& fashion = *m_fashion;
   Wearable& current = fashion.wearables.at(slot);
   wearableRemoved(current);
+  fashion.wornHeadsChanged = true;
+  fashion.helmetMasksChanged |= !head.maskDirectives().empty();
 
   current.makeType(current.typeIndexOf<WornHead>());
   auto& wornHead = current.get<WornHead>();
@@ -611,6 +612,7 @@ void Humanoid::setWearableFromChest(uint8_t slot, ChestArmor const& chest, Gende
   auto& fashion = *m_fashion;
   Wearable& current = fashion.wearables.at(slot);
   wearableRemoved(current);
+  fashion.wornChestsLegsChanged = true;
 
   current.makeType(current.typeIndexOf<WornChest>());
   auto& wornChest = current.get<WornChest>();
@@ -635,6 +637,7 @@ void Humanoid::setWearableFromLegs(uint8_t slot, LegsArmor const& legs, Gender g
   auto& fashion = *m_fashion;
   Wearable& current = fashion.wearables.at(slot);
   wearableRemoved(current);
+  fashion.wornChestsLegsChanged = true;
 
   current.makeType(current.typeIndexOf<WornLegs>());
   auto& wornLegs = current.get<WornLegs>();
@@ -655,6 +658,7 @@ void Humanoid::setWearableFromBack(uint8_t slot, BackArmor const& back, Gender g
   auto& fashion = *m_fashion;
   Wearable& current = fashion.wearables.at(slot);
   wearableRemoved(current);
+  fashion.wornBacksChanged = true;
 
   current.makeType(current.typeIndexOf<WornBack>());
   auto& wornBack = current.get<WornBack>();
@@ -1767,16 +1771,25 @@ List<Drawable> Humanoid::renderDummy(Gender gender, HeadArmor const* head, Chest
   try {
     m_fashion = std::make_shared<Fashion>();
     if (head)
-      setWearableFromHead(3, *head, gender);
+      setWearableFromHead(0, *head, gender);
     if (chest)
-      setWearableFromChest(2, *chest, gender);
+      setWearableFromChest(1, *chest, gender);
     if (legs)
-      setWearableFromLegs(1, *legs, gender);
+      setWearableFromLegs(2, *legs, gender);
     if (back)
-      setWearableFromBack(0, *back, gender);
+      setWearableFromBack(3, *back, gender);
+
 
     drawables = render(false, false, false, false);
     Drawable::scaleAll(drawables, TilePixels);
+    if (head)
+      removeWearable(0);
+    if (chest)
+      removeWearable(1);
+    if (legs)
+      removeWearable(2);
+    if (back)
+      removeWearable(3);
   } catch (std::exception const&) {
     restore();
     throw;

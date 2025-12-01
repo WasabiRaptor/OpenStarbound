@@ -25,6 +25,5 @@
 		"hairFrameset" : "<hairGroup>/<hairType>.png",
 		"facialHairFrameset" : "<facialHairGroup>/<facialHairType>.png",
 		"facialMaskFrameset" : "<facialMaskGroup>/<facialMaskType>.png"
-
 	}
 }
