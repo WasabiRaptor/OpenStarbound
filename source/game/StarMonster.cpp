@@ -282,7 +282,7 @@ List<DamageNotification> Monster::selfDamageNotifications() {
 
 List<DamageSource> Monster::damageSources() const {
   auto loungeAnchor = as<LoungeAnchor>(m_movementController->entityAnchor());
-  if (loungeAnchor && loungeAnchor->suppressTools) {
+  if (m_statusController->toolUsageSuppressed() || (loungeAnchor && loungeAnchor->suppressTools.value())) {
     return List<DamageSource>();
   }
   List<DamageSource> damageSources = m_damageSources.get();
@@ -935,7 +935,7 @@ List<ChatAction> Monster::pullPendingChatActions() {
 
 List<PhysicsForceRegion> Monster::forceRegions() const {
   auto loungeAnchor = as<LoungeAnchor>(m_movementController->entityAnchor());
-  if (loungeAnchor && loungeAnchor->suppressTools) {
+  if (m_statusController->toolUsageSuppressed() || (loungeAnchor && loungeAnchor->suppressTools.value())) {
     return List<PhysicsForceRegion>();
   }
 
