@@ -2,10 +2,14 @@
 
 rm -rf Starbecue
 git clone https://github.com/WasabiRaptor/Starbecue
+rm -rf Lexi-Starbound-Lib
+git clone https://github.com/WasabiRaptor/Lexi-Starbound-Lib
 rm -rf Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
-rm -rf sb_pokemon
-git clone https://github.com/WasabiRaptor/sb_pokemon
+rm -rf Lexis-Pokemon-Races
+git clone https://github.com/WasabiRaptor/Lexis-Pokemon-Races
+rm -rf Lexis-Races
+git clone https://github.com/WasabiRaptor/Lexis-Races
 rm -rf SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 rm -rf SBQ-compatibility
@@ -26,9 +30,11 @@ mkdir client_distribution/mods
 touch client_distribution/mods/mods_go_here
 
 ./dist/asset_packer -c scripts/packing.config Starbecue client_distribution/mods/starbecue.pak
+./dist/asset_packer -c scripts/packing.config Lexi-Starbound-Lib client_distribution/mods/Lexi-lib.pak
 ./dist/asset_packer -c scripts/packing.config Fuck-Your-Race-Effects client_distribution/mods/ShutUpAboutRaceEffects.pak
-./dist/asset_packer -c scripts/packing.config sb_pokemon client_distribution/mods/Raptors_Pokemon.pak
-./dist/asset_packer -c scripts/packing.config SB_MetroidDoors client_distribution/mods/Raptors_MetroidDoors.pak
+./dist/asset_packer -c scripts/packing.config Lexis-Pokemon-Races client_distribution/mods/Lexi-Pokemon.pak
+./dist/asset_packer -c scripts/packing.config Lexis-Races client_distribution/mods/Lexi-Races.pak
+./dist/asset_packer -c scripts/packing.config SB_MetroidDoors client_distribution/mods/Lexi-MetroidDoors.pak
 ./dist/asset_packer -c scripts/packing.config SBQ-compatibility client_distribution/mods/SBQ-compatibility.pak
 ./dist/asset_packer -c scripts/packing.config SBQ-LokiVulpix client_distribution/mods/SBQ-LokiVulpix.pak
 ./dist/asset_packer -c scripts/packing.config SBQ-fockoff client_distribution/mods/SBQ-fockoff.pak
@@ -47,7 +53,7 @@ cp \
   scripts/ci/linux/run-client.sh \
   scripts/steam_appid.txt \
   client_distribution/linux/
-  
+
 mkdir client_distribution/linux/.icon
 cp \
   source/client/starbound.bmp \
@@ -59,11 +65,12 @@ mkdir server_distribution/assets
 mkdir server_distribution/mods
 touch server_distribution/mods/mods_go_here
 
-./dist/asset_packer -c scripts/packing.config -s assets/opensb server_distribution/assets/opensb.pak
 ./dist/asset_packer -c scripts/packing.config -s Starbecue server_distribution/mods/starbecue.pak
+./dist/asset_packer -c scripts/packing.config -s Lexi-Starbound-Lib server_distribution/mods/Lexi-lib.pak
 ./dist/asset_packer -c scripts/packing.config -s Fuck-Your-Race-Effects server_distribution/mods/ShutUpAboutRaceEffects.pak
-./dist/asset_packer -c scripts/packing.config -s sb_pokemon server_distribution/mods/Raptors_Pokemon.pak
-./dist/asset_packer -c scripts/packing.config -s SB_MetroidDoors server_distribution/mods/Raptors_MetroidDoors.pak
+./dist/asset_packer -c scripts/packing.config -s Lexis-Pokemon-Races server_distribution/mods/Lexi-Pokemon.pak
+./dist/asset_packer -c scripts/packing.config -s Lexis-Races server_distribution/mods/Lexi-Races.pak
+./dist/asset_packer -c scripts/packing.config -s SB_MetroidDoors server_distribution/mods/Lexi-MetroidDoors.pak
 ./dist/asset_packer -c scripts/packing.config -s SBQ-compatibility server_distribution/mods/SBQ-compatibility.pak
 ./dist/asset_packer -c scripts/packing.config -s SBQ-LokiVulpix server_distribution/mods/SBQ-LokiVulpix.pak
 ./dist/asset_packer -c scripts/packing.config -s SBQ-fockoff server_distribution/mods/SBQ-fockoff.pak

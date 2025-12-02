@@ -15,16 +15,18 @@ if exist %server% rmdir %server% /S /Q
 xcopy %client% %server% /E /I
 
 if exist Starbecue rmdir Starbecue /S /Q
+if exist Lexi-Starbound-Lib rmdir Lexi-Starbound-Lib /S /Q
 if exist Fuck-Your-Race-Effects rmdir Fuck-Your-Race-Effects /S /Q
-if exist sb_pokemon rmdir sb_pokemon /S /Q
+if exist Lexis-Pokemon-Races rmdir Lexis-Pokemon-Races /S /Q
 if exist SB_MetroidDoors rmdir SB_MetroidDoors /S /Q
 if exist SBQ-compatibility rmdir SBQ-compatibility /S /Q
 if exist SBQ-LokiVulpix rmdir SBQ-LokiVulpix /S /Q
 if exist SBQ-fockoff rmdir SBQ-fockoff /S /Q
 
 git clone https://github.com/WasabiRaptor/Starbecue
+git clone https://github.com/WasabiRaptor/Lexi-Starbound-Lib
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
-git clone https://github.com/WasabiRaptor/sb_pokemon
+git clone https://github.com/WasabiRaptor/Lexis-Pokemon-Races
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SBQ-compatibility
 git clone https://github.com/WasabiRaptor/SBQ-LokiVulpix
@@ -49,9 +51,11 @@ copy scripts\ci\windows\install.ps1 %server%\install.ps1 /Y
 
 .\dist\asset_packer.exe -c scripts\packing.config assets\opensb %client%\assets\opensb.pak
 .\dist\asset_packer.exe -c scripts\packing.config Starbecue %client%\mods\starbecue.pak
+.\dist\asset_packer.exe -c scripts\packing.config Lexi-Starbound-Lib %client%\mods\Lexi-lib.pak
 .\dist\asset_packer.exe -c scripts\packing.config Fuck-Your-Race-Effects %client%\mods\ShutUpAboutRaceEffects.pak
-.\dist\asset_packer.exe -c scripts\packing.config sb_pokemon %client%\mods\Raptors_Pokemon.pak
-.\dist\asset_packer.exe -c scripts\packing.config SB_MetroidDoors %client%\mods\Raptors_MetroidDoors.pak
+.\dist\asset_packer.exe -c scripts\packing.config Lexis-Pokemon-Races %client%\mods\Lexi-Pokemon.pak
+.\dist\asset_packer.exe -c scripts\packing.config Lexis-Races %client%\mods\Lexi-Races.pak
+.\dist\asset_packer.exe -c scripts\packing.config SB_MetroidDoors %client%\mods\Lexi-MetroidDoors.pak
 .\dist\asset_packer.exe -c scripts\packing.config SBQ-compatibility %client%\mods\SBQ-compatibility.pak
 .\dist\asset_packer.exe -c scripts\packing.config SBQ-LokiVulpix %client%\mods\SBQ-LokiVulpix.pak
 .\dist\asset_packer.exe -c scripts\packing.config SBQ-fockoff %client%\mods\SBQ-fockoff.pak
@@ -62,9 +66,11 @@ for /f "delims=" %%f in (scripts\ci\windows\files_client.txt) do (
 
 .\dist\asset_packer.exe -c scripts\packing.config -s assets\opensb %server%\assets\opensb.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s Starbecue %server%\mods\starbecue.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s Lexi-Starbound-Lib %server%\mods\Lexi-lib.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s Fuck-Your-Race-Effects %server%\mods\ShutUpAboutRaceEffects.pak
-.\dist\asset_packer.exe -c scripts\packing.config -s sb_pokemon %server%\mods\Raptors_Pokemon.pak
-.\dist\asset_packer.exe -c scripts\packing.config -s SB_MetroidDoors %server%\mods\Raptors_MetroidDoors.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s Lexis-Pokemon-Races %server%\mods\Lexi-Pokemon.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s Lexis-Races %server%\mods\Lexi-Races.pak
+.\dist\asset_packer.exe -c scripts\packing.config -s SB_MetroidDoors %server%\mods\Lexi-MetroidDoors.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s SBQ-compatibility %server%\mods\SBQ-compatibility.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s SBQ-LokiVulpix %server%\mods\SBQ-LokiVulpix.pak
 .\dist\asset_packer.exe -c scripts\packing.config -s SBQ-fockoff %server%\mods\SBQ-fockoff.pak
