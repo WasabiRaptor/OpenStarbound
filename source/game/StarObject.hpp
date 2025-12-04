@@ -236,6 +236,7 @@ private:
   NetElementEnum<Direction> m_direction;
   float m_animationTimer;
   int m_currentFrame;
+  float m_animationRate;
 
   Directives m_directives;
   Directives m_colorDirectives;
