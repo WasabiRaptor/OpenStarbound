@@ -40,6 +40,7 @@ Object::Object(ObjectConfigConstPtr config, Json const& parameters) {
 
   m_animationTimer = 0.0f;
   m_currentFrame = 0;
+  m_animationRate = 1;
 
   m_lightFlickering = m_config->lightFlickering;
 
@@ -409,7 +410,7 @@ void Object::update(float dt, uint64_t) {
         setImageKey("frame", toString(frame));
       }
 
-      m_animationTimer = std::fmod(m_animationTimer + dt, orientation->animationCycle);
+      m_animationTimer = std::fmod(m_animationTimer + (dt * m_animationRate), orientation->animationCycle);
     }
 
     m_networkedAnimator->update(dt, nullptr);
@@ -1128,6 +1129,9 @@ LuaCallbacks Object::makeAnimatorObjectCallbacks() {
 
   callbacks.registerCallback("position", [this]() {
       return position();
+    });
+  callbacks.registerCallback("setAnimationRate", [this](float animationRate) {
+      m_animationRate = animationRate;
     });
 
   return callbacks;
