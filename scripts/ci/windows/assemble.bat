@@ -18,6 +18,7 @@ if exist Starbecue rmdir Starbecue /S /Q
 if exist Lexi-Starbound-Lib rmdir Lexi-Starbound-Lib /S /Q
 if exist Fuck-Your-Race-Effects rmdir Fuck-Your-Race-Effects /S /Q
 if exist Lexis-Pokemon-Races rmdir Lexis-Pokemon-Races /S /Q
+if exist Lexis-Races rmdir Lexis-Races /S /Q
 if exist SB_MetroidDoors rmdir SB_MetroidDoors /S /Q
 if exist SBQ-compatibility rmdir SBQ-compatibility /S /Q
 if exist SBQ-LokiVulpix rmdir SBQ-LokiVulpix /S /Q
@@ -27,6 +28,7 @@ git clone https://github.com/WasabiRaptor/Starbecue
 git clone https://github.com/WasabiRaptor/Lexi-Starbound-Lib
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/Lexis-Pokemon-Races
+git clone https://github.com/WasabiRaptor/Lexis-Races
 git clone https://github.com/WasabiRaptor/SB_MetroidDoors
 git clone https://github.com/WasabiRaptor/SBQ-compatibility
 git clone https://github.com/WasabiRaptor/SBQ-LokiVulpix
