@@ -260,6 +260,7 @@ void Player::diskLoad(Json const& diskStore) {
 
   auto speciesDatabase = Root::singleton().speciesDatabase();
   auto speciesDef = speciesDatabase->species(m_identity.species);
+  m_shipSpecies = diskStore.getString("shipSpecies", m_identity.species);
 
   m_questManager->diskLoad(diskStore.get("quests", JsonObject{}));
   m_companions->diskLoad(diskStore.get("companions", JsonObject{}));
@@ -2262,6 +2263,14 @@ void Player::applyShipUpgrades(Json const& upgrades) {
     m_shipUpgrades.apply(upgrades);
 }
 
+void Player::setShipSpecies(String species) {
+  m_shipSpecies = std::move(species);
+}
+
+String Player::shipSpecies() const {
+  return m_shipSpecies;
+}
+
 String Player::name() const {
   return m_identity.name;
 }
@@ -2575,6 +2584,7 @@ Json Player::diskStore() {
     {"description", m_description},
     {"modeType", PlayerModeNames.getRight(m_modeType)},
     {"shipUpgrades", m_shipUpgrades.toJson()},
+    {"shipSpecies", m_shipSpecies},
     {"blueprints", m_blueprints->toJson()},
     {"universeMap", m_universeMap->toJson()},
     {"codexes", m_codexes->toJson()},
@@ -2707,8 +2717,9 @@ void Player::queueRadioMessage(Json const& messageConfig, float delay) {
       return;
 
     // non-absolute portrait image paths are assumed to be a frame name within the player's species-specific AI
+
     if (!message.portraitImage.empty() && message.portraitImage[0] != '/')
-      message.portraitImage = Root::singleton().aiDatabase()->portraitImage(species(), message.portraitImage);
+      message.portraitImage = Root::singleton().aiDatabase()->portraitImage(shipSpecies(), message.portraitImage);
   } catch (RadioMessageDatabaseException const& e) {
     Logger::error("Couldn't queue radio message '{}': {}", messageConfig, e.what());
     return;
