@@ -2713,6 +2713,9 @@ void Player::queueRadioMessage(Json const& messageConfig, float delay) {
   try {
     message = Root::singleton().radioMessageDatabase()->createRadioMessage(messageConfig);
 
+    while (message.speciesAiMessage.contains(shipSpecies()) || message.speciesMessage.contains(species()))
+      message = message.speciesAiMessage.value(shipSpecies(), message.speciesMessage.value(species()));
+
     if (message.type == RadioMessageType::Tutorial && !Root::singleton().configuration()->get("tutorialMessages").toBool())
       return;
 
