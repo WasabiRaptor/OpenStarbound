@@ -5,17 +5,17 @@
 #include "StarItemDescriptor.hpp"
 #include "StarGameTimers.hpp"
 #include "StarEntity.hpp"
+#include "StarScriptedEntity.hpp"
 #include "StarDrawable.hpp"
 #include "StarMobileEntity.hpp"
+#include "StarLuaComponents.hpp"
 
 namespace Star {
 
 STAR_CLASS(Item);
 STAR_CLASS(ItemDrop);
 
-class ItemDrop :
-  public virtual MobileEntity,
-  public virtual Entity {
+class ItemDrop : public virtual MobileEntity, public virtual Entity, public virtual ScriptedEntity {
 public:
   // Creates a drop at the given position and adds a hard-coded amount of
   // randomness to the drop position / velocity.
@@ -87,6 +87,13 @@ public:
   Vec2F velocity() const;
   void setVelocity(Vec2F const& position);
 
+  Json configValue(String const& name, Json const& def = Json()) const;
+
+  Maybe<LuaValue> callScript(String const& func, LuaVariadic<LuaValue> const& args) override;
+  Maybe<LuaValue> evalScript(String const& code) override;
+
+  ClientEntityMode clientEntityMode() const override;
+
   MovementController* movementController() override;
 
 private:
@@ -101,7 +108,10 @@ private:
 
   void updateTaken(bool master);
 
+  LuaCallbacks makeItemDropCallbacks();
+
   Json m_config;
+  Json m_parameters;
   ItemPtr m_item;
   RectF m_boundBox;
   float m_afterTakenLife;
@@ -131,6 +141,11 @@ private:
 
   bool m_overForeground;
   Maybe<List<Drawable>> m_drawables;
+
+  ClientEntityMode m_clientEntityMode;
+
+  mutable LuaMessageHandlingComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>> m_scriptComponent;
+  Maybe<Mode> m_overrideMode;
 };
 
 }

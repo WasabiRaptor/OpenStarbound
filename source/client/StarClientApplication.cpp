@@ -30,6 +30,7 @@
 #include "StarVoiceLuaBindings.hpp"
 #include "StarHttpTrustDialog.hpp"
 #include "StarMainInterfaceTypes.hpp"
+
 #include "imgui.h"
 #include "imgui_freetype.h"
 
@@ -280,6 +281,20 @@ void ClientApplication::renderInit(RendererPtr renderer) {
   if (m_worldPainter)
     m_worldPainter->renderInit(renderer);
 
+  #ifdef STAR_ENABLE_STEAM_INTEGRATION
+  #ifdef STAR_SYSTEM_LINUX
+  if (g_steamIsFlatpak) {
+    auto config = m_root->configuration();
+    if (!config->get("steamFlatpakWarningShown").optBool().value()) {
+      config->set("steamFlatpakWarningShown", true);
+      m_errorScreen->setMessage(m_root->assets()->json("/interface.config:steamFlatpakWarning").toString());
+      changeState(MainAppState::SteamFlatpakWarning);
+      return;
+    }
+  }
+  #endif
+  #endif
+
   changeState(MainAppState::Mods);
 }
 
@@ -367,6 +382,15 @@ void ClientApplication::update() {
 
   if (!m_errorScreen->accepted())
     m_errorScreen->update(dt);
+
+  // This warning is only applicable to Linux systems so no need to process it otherwise.
+  #ifdef STAR_ENABLE_STEAM_INTEGRATION
+  #ifdef STAR_SYSTEM_LINUX
+  if (m_state == MainAppState::SteamFlatpakWarning)
+    updateSteamFlatpakWarning(dt);
+  else
+  #endif
+  #endif
 
   if (m_state == MainAppState::Mods)
     updateMods(dt);
@@ -850,6 +874,11 @@ void ClientApplication::loadMods() {
   }
 }
 
+void ClientApplication::updateSteamFlatpakWarning(float) {
+  if (m_errorScreen->accepted())
+    changeState(MainAppState::Mods);
+}
+
 void ClientApplication::updateMods(float dt) {
   m_cinematicOverlay->update(dt);
   auto ugcService = appController()->userGeneratedContentService();
@@ -861,41 +890,43 @@ void ClientApplication::updateMods(float dt) {
       Logger::info("Checking for user generated content updates...");
       m_loggedUGCCheck = true;
     }
-    if (ugcService->contentNeedsDownload()) {
-      ugcService->triggerContentDownload();
-    }
-    else if (!(ugcService->contentNeedsDownload()) && ugcService->triggerContentDownload()) {
-      Logger::info("Loading updated user generated content...");
-      StringList modDirectories;
-      for (auto& contentId : ugcService->subscribedContentIds()) {
-        if (auto contentDirectory = ugcService->contentDownloadDirectory(contentId)) {
-          Logger::info("Loading mods from user generated content with id '{}' from directory '{}'", contentId, *contentDirectory);
-          modDirectories.append(*contentDirectory);
-        } else {
-          Logger::warn("User generated content with id '{}' is not available", contentId);
+    
+    if (ugcService->triggerContentDownload() == UserGeneratedContentService::UGCState::NoDownload) {
+      changeState(MainAppState::Splash);
+    } else {
+      if (ugcService->triggerContentDownload() == UserGeneratedContentService::UGCState::Finished) {
+        Logger::info("Loading updated user generated content...");
+        StringList modDirectories;
+        for (auto& contentId : ugcService->subscribedContentIds()) {
+          if (auto contentDirectory = ugcService->contentDownloadDirectory(contentId)) {
+            Logger::info("Loading mods from user generated content with id '{}' from directory '{}'", contentId, *contentDirectory);
+            modDirectories.append(*contentDirectory);
+          } else {
+            Logger::warn("User generated content with id '{}' is not available", contentId);
+          }
         }
-      }
 
-      if (modDirectories.empty()) {
-        changeState(MainAppState::Splash);
-      } else {
-        Logger::info("Reloading to include updated user generated content");
-        Root::singleton().loadMods(modDirectories);
+        if (modDirectories.empty()) {
+          changeState(MainAppState::Splash);
+        } else {
+          Logger::info("Reloading to include updated user generated content");
+          Root::singleton().loadMods(modDirectories);
 
-        // We've just reloaded, so make sure to grab our config again!
-        // If we don't do this, we'll be able to read modsWarningShown
-        // just fine, but we won't be able to write it back to the file.
-        configuration = m_root->configuration();
-      }
-        
-      auto assets = m_root->assets();
+          // We've just reloaded, so make sure to grab our config again!
+          // If we don't do this, we'll be able to read modsWarningShown
+          // just fine, but we won't be able to write it back to the file.
+          configuration = m_root->configuration();
+        }
 
-      if (configuration->get("modsWarningShown").optBool().value()) {
-        changeState(MainAppState::Splash);
-      } else {
-        configuration->set("modsWarningShown", true);
-        m_errorScreen->setMessage(assets->json("/interface.config:modsWarningMessage").toString());
-        changeState(MainAppState::ModsWarning);
+        auto assets = m_root->assets();
+
+        if (configuration->get("modsWarningShown").optBool().value()) {
+          changeState(MainAppState::Splash);
+        } else {
+          configuration->set("modsWarningShown", true);
+          m_errorScreen->setMessage(assets->json("/interface.config:modsWarningMessage").toString());
+          changeState(MainAppState::ModsWarning);
+        }
       }
     }
   } else {
