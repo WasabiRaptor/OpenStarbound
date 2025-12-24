@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 rm -rf Starbecue
-git clone https://github.com/WasabiRaptor/Starbecue
+git clone https://github.com/WasabiRaptor/Starbecue -b 4.1
 rm -rf Lexi-Starbound-Lib
 git clone https://github.com/WasabiRaptor/Lexi-Starbound-Lib
 rm -rf Fuck-Your-Race-Effects

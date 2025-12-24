@@ -24,7 +24,7 @@ if exist SBQ-compatibility rmdir SBQ-compatibility /S /Q
 if exist SBQ-LokiVulpix rmdir SBQ-LokiVulpix /S /Q
 if exist SBQ-fockoff rmdir SBQ-fockoff /S /Q
 
-git clone https://github.com/WasabiRaptor/Starbecue
+git clone https://github.com/WasabiRaptor/Starbecue -b 4.1
 git clone https://github.com/WasabiRaptor/Lexi-Starbound-Lib
 git clone https://github.com/WasabiRaptor/Fuck-Your-Race-Effects
 git clone https://github.com/WasabiRaptor/Lexis-Pokemon-Races
