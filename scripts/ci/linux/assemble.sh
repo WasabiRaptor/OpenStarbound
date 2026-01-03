@@ -56,7 +56,7 @@ cp \
 
 mkdir client_distribution/linux/.icon
 cp \
-  source/client/starbound.bmp \
+  source/client/openstarbound.png \
   client_distribution/linux/.icon/
 
 mkdir server_distribution
