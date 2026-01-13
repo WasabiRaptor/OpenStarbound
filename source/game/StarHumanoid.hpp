@@ -163,6 +163,7 @@ public:
     String frameset;
     bool rotateWithHead = false;
     bool bypassNude = false;
+    bool fullbright = false;
     HashMap<String, String> animationTags = {};
   };
 
