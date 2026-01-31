@@ -1189,15 +1189,14 @@ void UniverseServer::handleWorldMessages() {
     if (auto worldResult = triggerWorldCreation(worldId)) {
       auto& world = *worldResult;
 
-      if (world){
-        if (world->isRunning()){
+      if (world) {
+        if (world->isRunning()) {
           world->passMessages(std::move(it->second));
           it = m_pendingWorldMessages.erase(it);
         }
       } else {
-        for (auto& message : it->second){
+        for (auto& message : it->second)
           message.promise.fail("Error creating world");
-        }
         it = m_pendingWorldMessages.erase(it);
       }
     } else
@@ -1852,10 +1851,16 @@ void UniverseServer::acceptConnection(UniverseConnection connection, Maybe<HostA
 
   Vec3I location = clientContext->shipCoordinate().location();
   if (location != Vec3I()) {
-    auto clientSystem = createSystemWorld(location);
-    clientSystem->addClient(clientId, clientContext->playerUuid(), clientContext->shipUpgrades().shipSpeed, clientContext->shipLocation());
-    addCelestialRequests(clientId, {makeLeft(location.vec2()), makeRight(location)});
-    clientContext->setSystemWorld(clientSystem);
+    try {
+      auto clientSystem = createSystemWorld(location);
+      clientSystem->addClient(clientId, clientContext->playerUuid(), clientContext->shipUpgrades().shipSpeed, clientContext->shipLocation());
+      addCelestialRequests(clientId, {makeLeft(location.vec2()), makeRight(location)});
+      clientContext->setSystemWorld(clientSystem);
+    }
+    catch (StarException const& e) {
+      Logger::error("Failed to place client ship at {}, resetting coordinate: {}", clientContext->shipCoordinate(), outputException(e, true));
+      clientContext->setShipCoordinate({});
+    }
   }
 
   Json introInstance = assets->json("/universe_server.config:introInstance");

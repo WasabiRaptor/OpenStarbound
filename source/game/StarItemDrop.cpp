@@ -325,7 +325,7 @@ bool ItemDrop::shouldDestroy() const {
 }
 
 void ItemDrop::render(RenderCallback* renderCallback) {
-  if (m_mode.get() != Mode::Taken) {
+  if (m_mode.get() != Mode::Taken && m_drawRarityBeam) {
     Color beamColor;
     switch (m_item->rarity()) {
     case Rarity::Uncommon:
@@ -488,6 +488,7 @@ ItemDrop::ItemDrop() {
   m_combineRadius = m_config.getFloat("combineRadius");
   m_ageItemsEvery = m_config.getDouble("ageItemsEvery", 10);
 
+  m_drawRarityBeam = m_config.getBool("drawRarityBeam", false);
   m_eternal = false;
   m_overForeground = false;
   m_clientEntityMode = ClientEntityMode::ClientSlaveOnly;
