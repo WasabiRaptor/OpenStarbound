@@ -313,6 +313,10 @@ LuaCallbacks LuaBindings::makeRootCallbacks() {
     return Json();
   });
 
+  callbacks.registerCallback("monsterConfig", [root](String const& typeName) -> Json {
+    return root->monsterDatabase()->monsterConfig(typeName);
+  });
+
   return callbacks;
 }
 
