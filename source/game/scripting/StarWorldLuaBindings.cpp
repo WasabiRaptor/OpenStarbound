@@ -356,6 +356,34 @@ namespace LuaBindings {
         }
       });
 
+    callbacks.registerCallback("biomeAt", [world](Vec2I position) -> Json {
+        WorldTemplateConstPtr worldTemplate;
+        if (auto worldClient = as<WorldClient>(world))
+          worldTemplate = worldClient->currentTemplate();
+        else if (auto worldServer = as<WorldServer>(world))
+          worldTemplate = worldServer->worldTemplate();
+
+        if (worldTemplate) {
+          WorldTemplate::BlockInfo block = worldTemplate->blockInfo(position[0], position[1]);
+          if (auto biome = worldTemplate->biome(block.blockBiomeIndex)) {
+            return biome->toJson();
+          }
+        }
+        return {};
+      });
+    callbacks.registerCallback("blockInfoAt", [world](Vec2I position) -> Json {
+        WorldTemplateConstPtr worldTemplate;
+        if (auto worldClient = as<WorldClient>(world))
+          worldTemplate = worldClient->currentTemplate();
+        else if (auto worldServer = as<WorldServer>(world))
+          worldTemplate = worldServer->worldTemplate();
+
+        if (worldTemplate) {
+          return worldTemplate->blockInfo(position[0], position[1]).toJson();
+        }
+        return {};
+      });
+
     if (auto clientWorld = as<WorldClient>(world)) {
       callbacks.registerCallback("inWorld", [clientWorld]() { return clientWorld->inWorld(); });
       callbacks.registerCallback("mainPlayer", [clientWorld]() { return clientWorld->clientState().playerId(); });
