@@ -69,6 +69,7 @@ public:
   void setUniverseSettings(UniverseSettingsPtr universeSettings);
   UniverseSettingsPtr universeSettings() const;
 
+  void setPause(bool pause);
   void setReferenceClock(ClockPtr clock);
 
   void initLua(UniverseServer* universe);
@@ -395,6 +396,8 @@ private:
   SkyPtr m_sky;
 
   ServerWeather m_weather;
+
+  ClockPtr m_referenceClock;
 
   CollisionGenerator m_collisionGenerator;
   List<CollisionBlock> m_workingCollisionBlocks;
