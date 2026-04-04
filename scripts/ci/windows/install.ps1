@@ -95,6 +95,7 @@ $STEAM_STARBOUND_DIR = $STARBOUND_INSTALL_PATH
 Remove-Item "$STEAM_STARBOUND_DIR\\mods\\Starbecue*.pak" -ErrorAction SilentlyContinue
 Remove-Item "$STEAM_STARBOUND_DIR\\mods\\starboundSpeciesAnimOverrides*.pak" -ErrorAction SilentlyContinue
 Remove-Item "$STEAM_STARBOUND_DIR\\mods\\SBQ_engine_assets*.pak" -ErrorAction SilentlyContinue
+Remove-Item "$STEAM_STARBOUND_DIR\\mods\\Raptors_Pokemon*.pak" -ErrorAction SilentlyContinue
 
 # Copy new files
 Write-Host $STEAM_STARBOUND_DIR

@@ -70,6 +70,7 @@ STEAM_INSTALL_DIR="${STARBOUND_INSTALL_PATH}"
 rm "${STEAM_INSTALL_DIR}/mods/Starbecue*.pak" 2>/dev/null || true
 rm "${STEAM_INSTALL_DIR}/mods/starboundSpeciesAnimOverrides*.pak" 2>/dev/null || true
 rm "${STEAM_INSTALL_DIR}/mods/SBQ_engine_assets*.pak" 2>/dev/null || true
+rm "${STEAM_INSTALL_DIR}/mods/Raptors_Pokemon*.pak" 2>/dev/null || true
 
 # add new files
 cp -rf linux/* "${STEAM_INSTALL_DIR}/linux"
