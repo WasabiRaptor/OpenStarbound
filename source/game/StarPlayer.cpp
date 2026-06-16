@@ -2985,6 +2985,10 @@ void Player::setAnimationParameter(String name, Json value) {
   m_scriptedAnimationParameters.set(std::move(name), std::move(value));
 }
 
+void Player::setDeathParticleBurst(Maybe<String> const& deathParticleBurst) {
+  m_deathParticleBurst.set(deathParticleBurst);
+}
+
 LoungeableEntity::LoungePositions * Player::loungePositions(){
   return m_netHumanoid.netElements().last()->loungePositions();
 }

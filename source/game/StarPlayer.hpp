@@ -521,6 +521,8 @@ public:
 
   void setAnimationParameter(String name, Json value);
 
+  void setDeathParticleBurst(Maybe<String> const& deathParticleBurst);
+
   virtual LoungeableEntity::LoungePositions* loungePositions() override;
   virtual LoungeableEntity::LoungePositions const* loungePositions() const override;
   virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
