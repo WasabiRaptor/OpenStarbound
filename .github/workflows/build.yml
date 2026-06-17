@@ -101,34 +101,34 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/windows/assemble.bat
-          ren client.zip OpenStarbound-Windows-Client.zip
-          ren server.zip OpenStarbound-Windows-Server.zip
+          ren client.zip OpenStarbound-SBQ-Windows-Client.zip
+          ren server.zip OpenStarbound-SBQ-Windows-Server.zip
 
       - name: Prepare Artifacts
         working-directory: ${{ github.workspace }}
         run: |
           7z -bb3 -mtp=2 -mm=Deflate64 -mx=9 a dist.zip -r dist\
-          ren dist.zip OpenStarbound-Windows-All-DevOnly.zip
+          ren dist.zip OpenStarbound-SBQ-Windows-All-DevOnly.zip
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Windows-All-DevOnly
-          path: OpenStarbound-Windows-All-DevOnly.zip
+          name: OpenStarbound-SBQ-Windows-All-DevOnly
+          path: OpenStarbound-SBQ-Windows-All-DevOnly.zip
           archive: false
 
       - name: Upload Client
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Windows-Client
-          path: OpenStarbound-Windows-Client.zip
+          name: OpenStarbound-SBQ-Windows-Client
+          path: OpenStarbound-SBQ-Windows-Client.zip
           archive: false
 
       - name: Upload Server
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Windows-Server
-          path: OpenStarbound-Windows-Server.zip
+          name: OpenStarbound-SBQ-Windows-Server
+          path: OpenStarbound-SBQ-Windows-Server.zip
           archive: false
 
       - name: Install Inno Setup
@@ -168,8 +168,8 @@ jobs:
       - name: Upload Installer
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Windows-Installer
-          path: installer/OpenStarbound-Windows-Installer.exe
+          name: OpenStarbound-SBQ-Windows-Installer
+          path: installer/OpenStarbound-SBQ-Windows-Installer.exe
           archive: true
           compression-level: 0
 
@@ -229,13 +229,13 @@ jobs:
 
       - name: Prepare Artifacts
         working-directory: ${{ github.workspace }}
-        run: tarlz -c9vf OpenStarbound-Linux-GCC.tar.lz dist
+        run: tarlz -c9vf OpenStarbound-SBQ-Linux-GCC.tar.lz dist
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-GCC
-          path: OpenStarbound-Linux-GCC.tar.lz
+          name: OpenStarbound-SBQ-Linux-GCC
+          path: OpenStarbound-SBQ-Linux-GCC.tar.lz
           archive: false
 
       - name: Run Tests
@@ -251,21 +251,21 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/linux/assemble.sh
-          mv -v client.tar.lz OpenStarbound-Linux-GCC-Client.tar.lz
-          mv -v server.tar.lz OpenStarbound-Linux-GCC-Server.tar.lz
+          mv -v client.tar.lz OpenStarbound-SBQ-Linux-GCC-Client.tar.lz
+          mv -v server.tar.lz OpenStarbound-SBQ-Linux-GCC-Server.tar.lz
 
       - name: Upload Client Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-GCC-Client
-          path: OpenStarbound-Linux-GCC-Client.tar.lz
+          name: OpenStarbound-SBQ-Linux-GCC-Client
+          path: OpenStarbound-SBQ-Linux-GCC-Client.tar.lz
           archive: false
 
       - name: Upload Server Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-GCC-Server
-          path: OpenStarbound-Linux-GCC-Server.tar.lz
+          name: OpenStarbound-SBQ-Linux-GCC-Server
+          path: OpenStarbound-SBQ-Linux-GCC-Server.tar.lz
           archive: false
 
   build_linux_clang:
@@ -327,13 +327,13 @@ jobs:
 
       - name: Prepare Artifacts
         working-directory: ${{ github.workspace }}
-        run: tarlz -c9vf OpenStarbound-Linux-Clang.tar.lz dist
+        run: tarlz -c9vf OpenStarbound-SBQ-Linux-Clang.tar.lz dist
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-Clang
-          path: OpenStarbound-Linux-Clang.tar.lz
+          name: OpenStarbound-SBQ-Linux-Clang
+          path: OpenStarbound-SBQ-Linux-Clang.tar.lz
           archive: false
 
       - name: Run Tests
@@ -349,21 +349,21 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/linux/assemble.sh
-          mv -v client.tar.lz OpenStarbound-Linux-Clang-Client.tar.lz
-          mv -v server.tar.lz OpenStarbound-Linux-Clang-Server.tar.lz
+          mv -v client.tar.lz OpenStarbound-SBQ-Linux-Clang-Client.tar.lz
+          mv -v server.tar.lz OpenStarbound-SBQ-Linux-Clang-Server.tar.lz
 
       - name: Upload Client Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-Clang-Client
-          path: OpenStarbound-Linux-Clang-Client.tar.lz
+          name: OpenStarbound-SBQ-Linux-Clang-Client
+          path: OpenStarbound-SBQ-Linux-Clang-Client.tar.lz
           archive: false
 
       - name: Upload Server Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-Clang-Server
-          path: OpenStarbound-Linux-Clang-Server.tar.lz
+          name: OpenStarbound-SBQ-Linux-Clang-Server
+          path: OpenStarbound-SBQ-Linux-Clang-Server.tar.lz
           archive: false
 
   build_linux_arm:
@@ -422,13 +422,13 @@ jobs:
 
       - name: Prepare Artifacts
         working-directory: ${{ github.workspace }}
-        run: tarlz -c9vf OpenStarbound-Linux-ARM-GCC.tar.lz dist
+        run: tarlz -c9vf OpenStarbound-SBQ-Linux-ARM-GCC.tar.lz dist
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-ARM-GCC
-          path: OpenStarbound-Linux-ARM-GCC.tar.lz
+          name: OpenStarbound-SBQ-Linux-ARM-GCC
+          path: OpenStarbound-SBQ-Linux-ARM-GCC.tar.lz
           archive: false
 
       - name: Run Tests
@@ -444,21 +444,21 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/linux/assemble.sh
-          mv -v client.tar.lz OpenStarbound-Linux-ARM-GCC-Client.tar.lz
-          mv -v server.tar.lz OpenStarbound-Linux-ARM-GCC-Server.tar.lz
+          mv -v client.tar.lz OpenStarbound-SBQ-Linux-ARM-GCC-Client.tar.lz
+          mv -v server.tar.lz OpenStarbound-SBQ-Linux-ARM-GCC-Server.tar.lz
 
       - name: Upload Client Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-ARM-GCC-Client
-          path: OpenStarbound-Linux-ARM-GCC-Client.tar.lz
+          name: OpenStarbound-SBQ-Linux-ARM-GCC-Client
+          path: OpenStarbound-SBQ-Linux-ARM-GCC-Client.tar.lz
           archive: false
 
       - name: Upload Server Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-ARM-GCC-Server
-          path: OpenStarbound-Linux-ARM-GCC-Server.tar.lz
+          name: OpenStarbound-SBQ-Linux-ARM-GCC-Server
+          path: OpenStarbound-SBQ-Linux-ARM-GCC-Server.tar.lz
           archive: false
 
   build_linux_arm_clang:
@@ -520,13 +520,13 @@ jobs:
 
       - name: Prepare Artifacts
         working-directory: ${{ github.workspace }}
-        run: tarlz -c9vf OpenStarbound-Linux-ARM-Clang.tar.lz dist
+        run: tarlz -c9vf OpenStarbound-SBQ-Linux-ARM-Clang.tar.lz dist
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-ARM-Clang
-          path: OpenStarbound-Linux-ARM-Clang.tar.lz
+          name: OpenStarbound-SBQ-Linux-ARM-Clang
+          path: OpenStarbound-SBQ-Linux-ARM-Clang.tar.lz
           archive: false
 
       - name: Run Tests
@@ -542,21 +542,21 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/linux/assemble.sh
-          mv -v client.tar.lz OpenStarbound-Linux-ARM-Clang-Client.tar.lz
-          mv -v server.tar.lz OpenStarbound-Linux-ARM-Clang-Server.tar.lz
+          mv -v client.tar.lz OpenStarbound-SBQ-Linux-ARM-Clang-Client.tar.lz
+          mv -v server.tar.lz OpenStarbound-SBQ-Linux-ARM-Clang-Server.tar.lz
 
       - name: Upload Client Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-ARM-Clang-Client
-          path: OpenStarbound-Linux-ARM-Clang-Client.tar.lz
+          name: OpenStarbound-SBQ-Linux-ARM-Clang-Client
+          path: OpenStarbound-SBQ-Linux-ARM-Clang-Client.tar.lz
           archive: false
 
       - name: Upload Server Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-Linux-ARM-Clang-Server
-          path: OpenStarbound-Linux-ARM-Clang-Server.tar.lz
+          name: OpenStarbound-SBQ-Linux-ARM-Clang-Server
+          path: OpenStarbound-SBQ-Linux-ARM-Clang-Server.tar.lz
           archive: false
 
   build-mac-intel:
@@ -620,26 +620,26 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           tarlz -c9vf dist.tar.lz dist
-          mv -v dist.tar.lz OpenStarbound-macOS-Intel.tar.lz
+          mv -v dist.tar.lz OpenStarbound-SBQ-macOS-Intel.tar.lz
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-macOS-Intel
-          path: OpenStarbound-macOS-Intel.tar.lz
+          name: OpenStarbound-SBQ-macOS-Intel
+          path: OpenStarbound-SBQ-macOS-Intel.tar.lz
           archive: false
 
       - name: Assemble Files
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/macos/assemble.sh
-          mv -v client.tar.lz OpenStarbound-macOS-Intel-Client.tar.lz
+          mv -v client.tar.lz OpenStarbound-SBQ-macOS-Intel-Client.tar.lz
 
       - name: Upload Client Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-macOS-Intel-Client
-          path: OpenStarbound-macOS-Intel-Client.tar.lz
+          name: OpenStarbound-SBQ-macOS-Intel-Client
+          path: OpenStarbound-SBQ-macOS-Intel-Client.tar.lz
           archive: false
 
   build-mac-arm:
@@ -703,24 +703,24 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           tarlz -c9vf dist.tar.lz dist
-          mv -v dist.tar.lz OpenStarbound-macOS-Silicon.tar.lz
+          mv -v dist.tar.lz OpenStarbound-SBQ-macOS-Silicon.tar.lz
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-macOS-Silicon
-          path: OpenStarbound-macOS-Silicon.tar.lz
+          name: OpenStarbound-SBQ-macOS-Silicon
+          path: OpenStarbound-SBQ-macOS-Silicon.tar.lz
           archive: false
 
       - name: Assemble Files
         working-directory: ${{ github.workspace }}
         run: |
           scripts/ci/macos/assemble.sh
-          mv -v client.tar.lz OpenStarbound-macOS-Silicon-Client.tar.lz
+          mv -v client.tar.lz OpenStarbound-SBQ-macOS-Silicon-Client.tar.lz
 
       - name: Upload Client Files
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: OpenStarbound-macOS-Silicon-Client
-          path: OpenStarbound-macOS-Silicon-Client.tar.lz
+          name: OpenStarbound-SBQ-macOS-Silicon-Client
+          path: OpenStarbound-SBQ-macOS-Silicon-Client.tar.lz
           archive: false
