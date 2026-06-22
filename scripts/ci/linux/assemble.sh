@@ -62,6 +62,8 @@ cp \
 mkdir server_distribution
 mkdir server_distribution/assets
 
+./dist/asset_packer -c scripts/packing.config assets/opensb server_distribution/assets/opensb.pak
+
 mkdir server_distribution/mods
 touch server_distribution/mods/mods_go_here
 
