@@ -1195,7 +1195,7 @@ List<Drawable> Humanoid::render(bool withItems, bool withRotationAndScale) {
         auto chest = fashion.wearables[size_t(i) - 1].ptr<WornChest>();
         if (chest && !chest->backSleeveFrameset.empty()) {
           if (holdingItem) {
-            addDrawable(backArmDrawable(chest->backSleeveFrameset, chest->directives));
+            addDrawable(backArmDrawable(chest->backSleeveFrameset, chest->directives), chest->fullbright);
           } else {
             String image;
             Vec2F position;
@@ -2544,7 +2544,7 @@ void NetHumanoid::netLoad(DataStream& ds, NetCompatibilityRules rules) {
   NetElementSyncGroup::netLoad(ds, rules);
 }
 
-void NetHumanoid::netElementsNeedLoad(bool initial) {
+void NetHumanoid::netElementsNeedLoad(bool /*initial*/) {
 }
 
 void NetHumanoid::netElementsNeedStore() {

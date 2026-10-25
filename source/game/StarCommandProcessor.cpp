@@ -21,27 +21,35 @@
 #include "StarAssets.hpp"
 #include "StarWorldLuaBindings.hpp"
 #include "StarUniverseServerLuaBindings.hpp"
+#include "StarCelestialLuaBindings.hpp"
 #include "StarString.hpp"
 
 namespace Star {
 
-CommandProcessor::CommandProcessor(UniverseServer* universe, LuaRootPtr luaRoot)
+CommandProcessor::CommandProcessor(UniverseServer* universe)
   : m_universe(universe) {
   auto assets = Root::singleton().assets();
+  auto universeConfig = assets->json("/universe_server.config");
+  
+  m_luaRoot = make_shared<LuaRoot>();
+  m_luaRoot->tuneAutoGarbageCollection(universeConfig.getFloat("luaGcPause"), universeConfig.getFloat("luaGcStepMultiplier"));
   m_scriptComponent.addCallbacks("universe", LuaBindings::makeUniverseServerCallbacks(m_universe));
+  m_scriptComponent.addCallbacks("celestial", LuaBindings::makeCelestialCallbacks(m_universe));
+  m_scriptComponent.addThreadCallbacks("universe", LuaBindings::makeUniverseServerCallbacks(m_universe));
+  m_scriptComponent.addThreadCallbacks("celestial", LuaBindings::makeCelestialCallbacks(m_universe));
   m_scriptComponent.addCallbacks("CommandProcessor", makeCommandCallbacks());
-  m_scriptComponent.setScripts(jsonToStringList(assets->json("/universe_server.config:commandProcessorScripts")));
-  luaRoot->luaEngine().setNullTerminated(false);
-  m_scriptComponent.setLuaRoot(luaRoot);
+  m_scriptComponent.setScripts(jsonToStringList(universeConfig.get("commandProcessorScripts")));
+  m_luaRoot->luaEngine().setNullTerminated(false);
+  m_scriptComponent.setLuaRoot(m_luaRoot);
   m_scriptComponent.init();
 }
 
-String CommandProcessor::adminCommand(String const& command, String const& argumentString) {
+ServerCommandResult CommandProcessor::adminCommand(String const& command, String const& argumentString) {
   MutexLocker locker(m_mutex);
   return handleCommand(ServerConnectionId, command, argumentString);
 }
 
-String CommandProcessor::userCommand(ConnectionId connectionId, String const& command, String const& argumentString) {
+ServerCommandResult CommandProcessor::userCommand(ConnectionId connectionId, String const& command, String const& argumentString) {
   MutexLocker locker(m_mutex);
   if (connectionId == ServerConnectionId)
     throw StarException("CommandProcessor::userCommand called with ServerConnectionId");
@@ -130,6 +138,19 @@ String CommandProcessor::admin(ConnectionId connectionId, String const& argument
     return strf("Admin privileges taken away from {}", m_universe->clientNick(targetClientId));
 }
 
+String CommandProcessor::serverDebug(ConnectionId connectionId, String const& /*argumentString*/) {
+  if (auto errorMsg = adminCheck(connectionId, "debug server"))
+    return *errorMsg;
+  if (m_universe->isLocal(connectionId))
+    return "Server is local, server debug already active";
+  if (m_universe->clientConnectionVersion(connectionId) < 17)
+    return "Client is not new enough to debug server";
+  
+  bool nowEnabled = !m_universe->serverDebug(connectionId);
+  m_universe->setServerDebug(connectionId,nowEnabled);
+  return strf("Server debug {}", nowEnabled ? "enabled" : "disabled");
+}
+
 String CommandProcessor::pvp(ConnectionId connectionId, String const&) {
   if (!m_universe->isPvp(connectionId)) {
     m_universe->setPvp(connectionId, true);
@@ -171,11 +192,11 @@ String CommandProcessor::warpRandom(ConnectionId connectionId, String const& typ
     return *errorMsg;
 
 	Vec2I size = {2, 2};
-	auto& celestialDatabase = m_universe->celestialDatabase();
+	auto celestialDatabase = m_universe->celestialDatabase();
 	Maybe<CelestialCoordinate> target = {};
 
-	auto validPlanet = [&celestialDatabase, &typeName](CelestialCoordinate const& p) {
-			if (auto celestialParams = celestialDatabase.parameters(p)) {
+	auto validPlanet = [celestialDatabase, &typeName](CelestialCoordinate const& p) {
+			if (auto celestialParams = celestialDatabase->parameters(p)) {
 				if (auto visitableParams = celestialParams->visitableParameters()) {
 					if (visitableParams->typeName == typeName)
 						return true;
@@ -187,16 +208,16 @@ String CommandProcessor::warpRandom(ConnectionId connectionId, String const& typ
 	while (target.isNothing()) {
 		RectI region = RectI::withSize(Vec2I(Random::randi32(), Random::randi32()), size);
 
-		while (!celestialDatabase.scanRegionFullyLoaded(region)) {
-			celestialDatabase.scanSystems(region);
+		while (!celestialDatabase->scanRegionFullyLoaded(region)) {
+			celestialDatabase->scanSystems(region);
 		}
-		auto systems = celestialDatabase.scanSystems(region);
+		auto systems = celestialDatabase->scanSystems(region);
 		for (auto s : systems) {
-			for (auto planet : celestialDatabase.children(s)) {
+			for (auto planet : celestialDatabase->children(s)) {
 				if (validPlanet(planet))
 					target = planet;
 				if (target.isNothing()) {
-					for (auto moon : celestialDatabase.children(planet)) {
+					for (auto moon : celestialDatabase->children(planet)) {
 						if (validPlanet(moon)) {
 							target = moon;
 							break;
@@ -914,7 +935,7 @@ String CommandProcessor::setWeather(ConnectionId connectionId, String const& arg
   if (arguments.empty()) {
     StringList list;
     bool done = m_universe->executeForClient(connectionId,
-                                             [&list](WorldServer* world, PlayerPtr const&) { list = world->weatherList(); });
+                                             [&list](WorldServer* world, PlayerPtr const& player) { list = world->weatherList(player->position()); });
     return done ? strf("weathers: {}", list.join(", ")) : "failed to query weather";
   }
 
@@ -935,7 +956,7 @@ String CommandProcessor::setWeather(ConnectionId connectionId, String const& arg
   bool done;
   if (coordinate.isNull()) {
     done = m_universe->executeForClient(connectionId,
-                                        [weatherName, force](WorldServer* world, PlayerPtr const&) { world->setWeather(weatherName, force); });
+                                        [weatherName, force](WorldServer* world, PlayerPtr const& player) { world->setWeather(player->position(), weatherName, force); });
   } else {
     done = m_universe->setWeather(coordinate, weatherName, force);
   }
@@ -991,6 +1012,7 @@ const CaseInsensitiveStringMap<std::function<String(CommandProcessor*, Connectio
 
   // Register all commands
   add("admin", &CommandProcessor::admin);
+  add("serverdebug", &CommandProcessor::serverDebug);
   add("timewarp", &CommandProcessor::timewarp);
   add("timescale", &CommandProcessor::timescale);
   add("tickrate", &CommandProcessor::tickrate);
@@ -1034,15 +1056,26 @@ const CaseInsensitiveStringMap<std::function<String(CommandProcessor*, Connectio
   return map;
 }();
 
-String CommandProcessor::handleCommand(ConnectionId connectionId, String const& command, String const& argumentString) {
+ServerCommandResult CommandProcessor::handleCommand(ConnectionId connectionId, String const& command, String const& argumentString) {
   auto it = s_commandMap.find(command);
   if (it != s_commandMap.end()) {
     return it->second(this, connectionId, argumentString);
   }
-  if (auto res = m_scriptComponent.invoke("command", command, connectionId, jsonFromStringList(m_parser.tokenizeToStringList(argumentString)))) {
-    return toString(*res);
+  if (auto res = m_scriptComponent.invoke<Variant<RpcPromise<Json>,LuaValue>>("command", command, connectionId, jsonFromStringList(m_parser.tokenizeToStringList(argumentString)))) {
+    if (res->is<RpcPromise<Json>>()) {
+      return res->get<RpcPromise<Json>>().wrap([](Json res) -> String {
+        if (res.isType(Json::Type::String))
+          return *res.stringPtr();
+        else if (!res.isNull())
+          return res.repr(1, true);
+        else
+          return "";
+      });
+    } else {
+      return String(toString(res->get<LuaValue>()));
+    }
   }
-  return strf("No such command {}", command);
+  return String(strf("No such command {}", command));
 }
 
 Maybe<String> CommandProcessor::adminCheck(ConnectionId connectionId, String const& commandDescription) const {
