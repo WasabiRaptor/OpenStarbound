@@ -100,7 +100,7 @@ public:
   EntityType entityType() const override;
   ClientEntityMode clientEntityMode() const override;
 
-  void init(World* world, EntityId entityId, EntityMode mode) override;
+  void init(World* world, EntityId entityId, EntityMode mode, ConnectionId originConnection = ServerConnectionId) override;
   void uninit() override;
 
   Vec2F position() const override;
@@ -204,14 +204,14 @@ public:
   Direction walkingDirection() const override;
   Direction facingDirection() const override;
 
-  Maybe<Json> receiveMessage(ConnectionId sendingConnection, String const& message, JsonArray const& args = {}) override;
+  Maybe<ChainableJsonMessageResponse> receiveMessage(ConnectionId sendingConnection, String const& message, JsonArray const& args = {}) override;
 
   void update(float dt, uint64_t currentStep) override;
 
   void render(RenderCallback* renderCallback) override;
 
   void renderLightSources(RenderCallback* renderCallback) override;
-  
+
   void setRenderLayer(Maybe<EntityRenderLayer> layer);
 
   Json getGenericProperty(String const& name, Json const& defaultValue = Json()) const;
@@ -406,6 +406,20 @@ public:
   bool isDeployed() const;
 
   void setBusyState(PlayerBusyState busyState);
+  // All the busy states the interface currently wants shown (a window can be open while the chat box has focus).
+  void setBusyStates(Set<PlayerBusyState> const& busyStates);
+  Set<PlayerBusyState> const& busyStates() const;
+  // The strongest of those (menu, then chatting), before any hidden indicators are applied.
+  PlayerBusyState busyState() const;
+  // Scripts can hide the indicator of a busy state. While hidden, requesting that state shows none instead.
+  void setBusyIndicatorHidden(PlayerBusyState busyState, bool hidden);
+  bool busyIndicatorHidden(PlayerBusyState busyState) const;
+
+  // What the party sees in place of this player's name and portrait. Not saved, set by scripts.
+  Maybe<String> const& teamName() const;
+  void setTeamName(Maybe<String> name);
+  Maybe<List<Drawable>> const& teamPortrait() const;
+  void setTeamPortrait(Maybe<List<Drawable>> portrait);
 
   // A hard move to a specified location
   void moveTo(Vec2F const& footPosition);
@@ -532,7 +546,7 @@ public:
   virtual NetworkedAnimator * networkedAnimator()  override;
 
 private:
-  typedef LuaMessageHandlingComponent<LuaStorableComponent<LuaActorMovementComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>>>> GenericScriptComponent;
+  typedef LuaMessageHandlingComponent<LuaStorableComponent<LuaActorMovementComponent<LuaUpdatableComponent<LuaEntityComponent<LuaBaseComponent>>>>> GenericScriptComponent;
   typedef shared_ptr<GenericScriptComponent> GenericScriptComponentPtr;
 
   typedef std::function<void(ItemPtr)> ItemSetFunc;
@@ -560,7 +574,7 @@ private:
 
   NetElementDynamicGroup<NetHumanoid> m_netHumanoid;
   NetElementData<Maybe<String>> m_deathParticleBurst;
-  LuaAnimationComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>> m_scriptedAnimator;
+  LuaAnimationComponent<LuaUpdatableComponent<LuaEntityComponent<LuaBaseComponent>>> m_scriptedAnimator;
   NetElementHashMap<String, Json> m_scriptedAnimationParameters;
   NetworkedAnimator::DynamicTarget m_humanoidDynamicTarget;
 
@@ -606,6 +620,12 @@ private:
 
   String m_teleportAnimationType;
   NetworkedAnimatorPtr m_effectsAnimator;
+  void updateBusyIndicator();
+  PlayerBusyState m_busyState = PlayerBusyState::None;
+  Set<PlayerBusyState> m_busyStates;
+  Set<PlayerBusyState> m_hiddenBusyIndicators;
+  Maybe<String> m_teamName;
+  Maybe<List<Drawable>> m_teamPortrait;
   NetworkedAnimator::DynamicTarget m_effectsAnimatorDynamicTarget;
 
   float m_emoteCooldown;

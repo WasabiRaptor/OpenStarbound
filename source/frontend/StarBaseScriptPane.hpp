@@ -28,6 +28,11 @@ public:
   Json const& config() const;
   Json const& rawConfig() const;
 
+  // For native panes whose layout lives in a window config (with a "paneLayout").
+  // The config with a "gui" added so it can be used as a script pane config.
+  // The config can then carry "scripts", "scriptWidgetCallbacks" and so on, or not.
+  static Json windowConfig(String const& path, bool dismissable = true);
+
   bool interactive() const override;
   bool dismissable() const override;
 
@@ -40,6 +45,9 @@ public:
 protected:
   virtual GuiReaderPtr reader() override;
   void construct(Json config);
+  // sets the script and its update rate from the config.
+  // Construct does this, but a pane that builds its own widgets has to call it once before being first displayed
+  void setupScript();
 
   Json m_config;
   Json m_rawConfig;

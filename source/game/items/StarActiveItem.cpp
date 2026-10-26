@@ -76,8 +76,7 @@ void ActiveItem::init(ToolUserEntity* owner, ToolHand hand) {
       m_script.addCallbacks("player", LuaBindings::makePlayerCallbacks(player));
     if (auto npc = as<Npc>(owner))
       m_script.addCallbacks("npc", npc->makeNpcCallbacks());
-    m_script.addCallbacks("entity", LuaBindings::makeEntityCallbacks(as<Entity>(owner)));
-    m_script.init(world());
+    m_script.init(as<Entity>(owner));
     m_currentFireMode = FireMode::None;
   }
   if (world()->isClient()) {
@@ -91,7 +90,7 @@ void ActiveItem::init(ToolUserEntity* owner, ToolHand hand) {
         }));
       m_scriptedAnimator.addCallbacks("activeItemAnimation", makeScriptedAnimationCallbacks());
       m_scriptedAnimator.addCallbacks("config", LuaBindings::makeConfigCallbacks(bind(&Item::instanceValue, as<Item>(this), _1, _2)));
-      m_scriptedAnimator.init(world());
+      m_scriptedAnimator.init(as<Entity>(owner));
     }
   }
 }
@@ -107,7 +106,6 @@ void ActiveItem::uninit() {
     m_script.removeActorMovementCallbacks();
     m_script.removeCallbacks("player");
     m_script.removeCallbacks("npc");
-    m_script.removeCallbacks("entity");
   }
   if (world()->isClient()) {
     if (auto animationScripts = instanceValue("animationScripts")) {
@@ -330,7 +328,7 @@ Maybe<String> ActiveItem::cursor() const {
   return m_cursor;
 }
 
-Maybe<Json> ActiveItem::receiveMessage(String const& message, bool localMessage, JsonArray const& args) {
+Maybe<ChainableJsonMessageResponse> ActiveItem::receiveMessage(String const& message, bool localMessage, JsonArray const& args) {
   return m_script.handleMessage(message, localMessage, args);
 }
 

@@ -24,6 +24,7 @@ SetupIconFile=scripts\inno\openstarbound.ico
 Compression=lzma2/ultra64
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
+SetupArchitecture=x64
 WizardStyle=modern
 WizardImageAlphaFormat=premultiplied
 WizardSmallImageFile=scripts\inno\small.bmp
@@ -35,8 +36,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "windows\win64\{#AppExeName}"; DestDir: "{app}\win64\"; Flags: ignoreversion
-Source: "windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "windows\win\{#AppExeName}"; DestDir: "{app}\win\"; Flags: ignoreversion
+Source: "windows\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "windows\*.pdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs setntfscompression
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Dirs]

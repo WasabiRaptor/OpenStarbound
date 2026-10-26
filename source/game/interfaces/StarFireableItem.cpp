@@ -74,14 +74,7 @@ void FireableItem::init(ToolUserEntity* owner, ToolHand hand) {
         "config", LuaBindings::makeConfigCallbacks(bind(&Item::instanceValue, as<Item>(this), _1, _2)));
     m_scriptComponent->addCallbacks("fireableItem", LuaBindings::makeFireableItemCallbacks(this));
     m_scriptComponent->addCallbacks("item", LuaBindings::makeItemCallbacks(as<Item>(this)));
-    m_scriptComponent->addCallbacks("status", LuaBindings::makeStatusControllerCallbacks(owner->statusController()));
-    if (auto player = as<Player>(owner))
-      m_scriptComponent->addCallbacks("player", LuaBindings::makePlayerCallbacks(player));
-    if (auto npc = as<Npc>(owner))
-      m_scriptComponent->addCallbacks("npc", npc->makeNpcCallbacks());
-    m_scriptComponent->addCallbacks("entity", LuaBindings::makeEntityCallbacks(as<Entity>(owner)));
-
-    m_scriptComponent->init(world());
+    m_scriptComponent->init(as<Entity>(owner));
   }
 }
 

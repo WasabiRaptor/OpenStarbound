@@ -51,6 +51,9 @@ copy scripts\ci\windows\install.bat %server%\install.bat /Y
 copy scripts\ci\windows\install.ps1 %client%\install.ps1 /Y
 copy scripts\ci\windows\install.ps1 %server%\install.ps1 /Y
 
+rem the OpenStarbound page of the credits lists the contributors of the repository (leaves the committed list alone if GitHub can't be reached)
+bash scripts/credits/generate-contributors.sh
+
 .\dist\asset_packer.exe -c scripts\packing.config assets\opensb %client%\assets\opensb.pak
 .\dist\asset_packer.exe -c scripts\packing.config Starbecue %client%\mods\starbecue.pak
 .\dist\asset_packer.exe -c scripts\packing.config Lexi-Starbound-Lib %client%\mods\Lexi-lib.pak

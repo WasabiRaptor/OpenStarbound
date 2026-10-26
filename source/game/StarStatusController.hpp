@@ -119,7 +119,8 @@ public:
   void tickSlave(float dt);
 
   const DirectivesGroup& parentDirectives() const;
-  List<Drawable> drawables(Vec2F position = Vec2F()) const;
+  List<Drawable> backDrawables(Vec2F position = Vec2F()) const;
+  List<Drawable> frontDrawables(Vec2F position = Vec2F()) const;
   List<LightSource> lightSources() const;
   List<OverheadBar> overheadBars();
   bool toolUsageSuppressed() const;
@@ -128,12 +129,12 @@ public:
   List<AudioInstancePtr> pullNewAudios();
   List<Particle> pullNewParticles();
 
-  Maybe<Json> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {});
+  Maybe<ChainableJsonMessageResponse> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {});
 
   void setScale(float scale);
 
 private:
-  typedef LuaMessageHandlingComponent<LuaActorMovementComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>>> StatScript;
+  typedef LuaMessageHandlingComponent<LuaActorMovementComponent<LuaUpdatableComponent<LuaEntityComponent<LuaBaseComponent>>>> StatScript;
 
   struct EffectAnimator : public NetElement {
     EffectAnimator(Maybe<String> animationConfig = {});
@@ -154,6 +155,7 @@ private:
     Maybe<String> animationConfig;
     NetworkedAnimator animator;
     NetworkedAnimator::DynamicTarget dynamicTarget;
+    bool includeBack = false;
   };
   typedef NetElementDynamicGroup<EffectAnimator> EffectAnimatorGroup;
 

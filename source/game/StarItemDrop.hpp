@@ -4,7 +4,7 @@
 #include "StarMovementController.hpp"
 #include "StarItemDescriptor.hpp"
 #include "StarGameTimers.hpp"
-#include "StarEntity.hpp"
+#include "StarMobileEntity.hpp"
 #include "StarScriptedEntity.hpp"
 #include "StarDrawable.hpp"
 #include "StarMobileEntity.hpp"
@@ -15,7 +15,7 @@ namespace Star {
 STAR_CLASS(Item);
 STAR_CLASS(ItemDrop);
 
-class ItemDrop : public virtual MobileEntity, public virtual Entity, public virtual ScriptedEntity {
+class ItemDrop : public virtual MobileEntity, public virtual ScriptedEntity {
 public:
   // Creates a drop at the given position and adds a hard-coded amount of
   // randomness to the drop position / velocity.
@@ -37,7 +37,7 @@ public:
 
   EntityType entityType() const override;
 
-  void init(World* world, EntityId entityId, EntityMode mode) override;
+  void init(World* world, EntityId entityId, EntityMode mode, ConnectionId originConnection = ServerConnectionId) override;
   void uninit() override;
 
   String name() const override;
@@ -62,6 +62,9 @@ public:
 
   virtual void render(RenderCallback* renderCallback) override;
   virtual void renderLightSources(RenderCallback* renderCallback) override;
+  
+  MovementController* movementController() override;
+  
   // The item that this drop contains
   ItemPtr item() const;
 
@@ -144,8 +147,8 @@ private:
   Maybe<List<Drawable>> m_drawables;
 
   ClientEntityMode m_clientEntityMode;
-
-  mutable LuaMessageHandlingComponent<LuaUpdatableComponent<LuaWorldComponent<LuaBaseComponent>>> m_scriptComponent;
+  
+  mutable LuaMessageHandlingComponent<LuaUpdatableComponent<LuaEntityComponent<LuaBaseComponent>>> m_scriptComponent;
   Maybe<Mode> m_overrideMode;
 };
 
