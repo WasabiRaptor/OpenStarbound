@@ -532,7 +532,7 @@ void MainInterface::handleInteractAction(InteractAction interactAction) {
     displayScriptPane(scriptPane, shareSourceEntity ? NullEntityId : sourceEntity);
 
   } else if (interactAction.type == InteractActionType::Message) {
-    Maybe<Json> result;
+    Maybe<ChainableJsonMessageResponse> result;
     for (auto p : paneManager()->getAllPanes()){
       result = p->receiveMessage(interactAction.data.getString("messageType"), connectionForEntity(interactAction.entityId) == m_client->worldClient()->connection(), interactAction.data.getArray("messageArgs"));
       if (result.isValid())

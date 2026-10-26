@@ -102,8 +102,8 @@ LoungeAnchorConstPtr LoungeableObject::loungeAnchor(size_t positionIndex) const 
   return loungeAnchor;
 }
 
-void LoungeableObject::init(World* world, EntityId entityId, EntityMode mode) {
-  Object::init(world, entityId, mode);
+void LoungeableObject::init(World* world, EntityId entityId, EntityMode mode, ConnectionId originConnection) {
+  Object::init(world, entityId, mode, originConnection);
   if (m_useLoungePositions){
     loungeInit();
   }
@@ -143,10 +143,10 @@ NetworkedAnimator * LoungeableObject::networkedAnimator()  {
   return Object::networkedAnimator();
 }
 
-Maybe<Json> LoungeableObject::receiveMessage(ConnectionId sendingConnection, String const& message, JsonArray const& args) {
+Maybe<ChainableJsonMessageResponse> LoungeableObject::receiveMessage(ConnectionId sendingConnection, String const& message, JsonArray const& args) {
   if (m_useLoungePositions)
     if (receiveLoungeMessage(sendingConnection, message, args).isValid())
-      return Json();
+      return ChainableJsonMessageResponse(Json());
   return Object::receiveMessage(sendingConnection, message, args);
 }
 

@@ -94,7 +94,7 @@ public:
   virtual Maybe<ItemPtr> shiftItemFromInventory(ItemPtr const& input);
 
   virtual LuaCallbacks makePaneCallbacks();
-  virtual Maybe<Json> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {});
+  virtual Maybe<ChainableJsonMessageResponse> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {});
 
   virtual bool dismissable() const;
 

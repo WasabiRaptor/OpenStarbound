@@ -1216,7 +1216,7 @@ List<LightSource> Npc::lightSources() const {
 Maybe<ChainableJsonMessageResponse> Npc::receiveMessage(ConnectionId sendingConnection, String const& message, JsonArray const& args) {
   if (loungePositions()->size())
     if (receiveLoungeMessage(sendingConnection, message, args).isValid())
-      return Json();
+      return ChainableJsonMessageResponse(Json());
   Maybe<ChainableJsonMessageResponse> result = m_scriptComponent.handleMessage(message, world()->connection() == sendingConnection, args);
   if (!result)
     result = m_statusController->receiveMessage(message, world()->connection() == sendingConnection, args);

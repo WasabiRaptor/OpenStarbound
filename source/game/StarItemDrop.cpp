@@ -542,9 +542,6 @@ void ItemDrop::updateTaken(bool master) {
   m_movementController.applyParameters(parameters);
 }
 
-MovementController* ItemDrop::movementController() {
-  return &m_movementController;
-}
 Maybe<LuaValue> ItemDrop::callScript(String const& func, LuaVariadic<LuaValue> const& args) {
   return m_scriptComponent.invoke(func, args);
 }

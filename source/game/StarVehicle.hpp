@@ -84,7 +84,6 @@ public:
 
   void setPosition(Vec2F const& position);
 
-  MovementController* movementController() override;
   virtual EntityRenderLayer loungeRenderLayer(size_t anchorPositionIndex) const override;
   virtual NetworkedAnimator const* networkedAnimator() const override;
   virtual NetworkedAnimator * networkedAnimator()  override;

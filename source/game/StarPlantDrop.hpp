@@ -51,7 +51,6 @@ public:
   
   MovementController* movementController() override;
 
-  MovementController* movementController() override;
 
 private:
   struct PlantDropPiece {

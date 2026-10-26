@@ -520,13 +520,7 @@ void Monster::render(RenderCallback* renderCallback) {
     renderLayer = loungeAnchor->loungeRenderLayer;
 
   if (!loungeAnchor ||(!loungeAnchor->usePartZLevel && !loungeAnchor->hidden) ) {
-    renderCallback->addDrawables(m_statusController->backDrawables(), renderLayer);
-    for (auto& drawable : m_networkedAnimator.drawables(position())) {
-      if (drawable.isImage())
-        drawable.imagePart().addDirectivesGroup(m_statusController->parentDirectives(), true);
-      renderCallback->addDrawable(std::move(drawable), renderLayer);
-    }
-    renderCallback->addDrawables(m_statusController->frontDrawables(), m_monsterVariant.renderLayer);
+    renderCallback->addDrawables(drawables(position()), renderLayer);
   }
   if (loungeAnchor && loungeAnchor->hidden) {
     m_networkedAnimatorDynamicTarget.pullNewParticles();
@@ -551,7 +545,7 @@ void Monster::render(RenderCallback* renderCallback) {
 List<Drawable> Monster::drawables(Vec2F position) {
   List<Drawable> drawables;
   auto anchor = as<LoungeAnchor>(m_movementController->entityAnchor());
-
+  drawables.appendAll(m_statusController->backDrawables(position));
   for (auto& drawable : m_networkedAnimator.drawables(position)) {
     if (drawable.isImage()) {
       drawable.imagePart().addDirectivesGroup(m_statusController->parentDirectives(), true);
@@ -562,7 +556,7 @@ List<Drawable> Monster::drawables(Vec2F position) {
     }
     drawables.append(std::move(drawable));
   }
-  drawables.appendAll(m_statusController->drawables(position));
+  drawables.appendAll(m_statusController->frontDrawables(position));
 
   return drawables;
 }

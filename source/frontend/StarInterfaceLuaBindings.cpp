@@ -49,7 +49,10 @@ LuaCallbacks LuaBindings::makeInterfaceCallbacks(MainInterface* mainInterface) {
   callbacks.registerCallback("sendMessage", [mainInterface](String const& message, LuaVariadic<Json> args) {
     for (auto p : mainInterface->paneManager()->getAllPanes()) {
       if (auto resp = p->receiveMessage(message, true, args))
-        return RpcPromise<Json>::createFulfilled(resp.take());
+        if (resp->is<Json>())
+          return RpcPromise<Json>::createFulfilled(resp->get<Json>());
+        else
+          return resp->get<RpcPromise<Json>>();
     }
     return RpcPromise<Json>::createFailed("Message not handled by interface");
   });

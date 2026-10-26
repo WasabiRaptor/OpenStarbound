@@ -40,7 +40,7 @@ public:
   Maybe<String> cursorOverride(Vec2I const& screenPosition) override;
   Maybe<ItemPtr> shiftItemFromInventory(ItemPtr const& input) override;
 
-  virtual Maybe<Json> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {}) override;
+  virtual Maybe<ChainableJsonMessageResponse> receiveMessage(String const& message, bool localMessage, JsonArray const& args = {}) override;
 
 protected:
   virtual GuiReaderPtr reader() override;

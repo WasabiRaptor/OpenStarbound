@@ -834,7 +834,7 @@ void Player::dropItem() {
 Maybe<ChainableJsonMessageResponse> Player::receiveMessage(ConnectionId fromConnection, String const& message, JsonArray const& args) {
   if (loungePositions()->size())
     if (receiveLoungeMessage(fromConnection, message, args).isValid())
-      return Json();
+      return ChainableJsonMessageResponse(Json());
   bool localMessage = fromConnection == world()->connection();
   if (message == "queueRadioMessage" && args.size() > 0) {
     float delay = 0;
@@ -1273,8 +1273,6 @@ void Player::render(RenderCallback* renderCallback) {
     audio->setPosition(position());
     renderCallback->addAudio(std::move(audio));
   }
-
-  auto loungeAnchor = as<LoungeAnchor>(m_movementController->entityAnchor());
 
   EntityRenderLayer renderLayer = RenderLayerPlayer;
   if (auto overrideRenderLayer = getSecretProperty("overrideRenderLayer"); overrideRenderLayer.canConvert(Json::Type::Int)) {

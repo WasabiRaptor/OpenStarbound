@@ -97,7 +97,6 @@ public:
 
   ClientEntityMode clientEntityMode() const override;
 
-  MovementController* movementController() override;
 
 private:
   enum class Mode { Intangible, Available, Taken, Dead };
